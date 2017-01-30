@@ -1,14 +1,14 @@
-prog: prog.c lib_2d.o lib_mat.o lib_surface.o lib_3d_etu.o lib_objet3d_etu.o lib_scene3d_etu.o
-	gcc -g prog.c lib_2d.o lib_mat.o lib_surface.o lib_3d_etu.o lib_objet3d_etu.o lib_scene3d_etu.o PA_3d.o PA_objet3d.o PA_scene3d.o -lm -lSDL -o prog
+prog: prog.c lib_2d.o lib_mat.o lib_surface.o lib_3d_BH.o lib_objet3d_BH.o lib_scene3d_BH.o
+	gcc -g prog.c lib_2d.o lib_mat.o lib_surface.o lib_3d_BH.o lib_objet3d_BH.o lib_scene3d_BH.o PA_3d.o PA_objet3d.o PA_scene3d.o -lm -lSDL -o prog
 
-lib_3d_etu.o: lib_3d_etu.c lib_3d.h
-	gcc -c lib_3d_etu.c
+lib_3d_BH.o: lib_3d_BH.c lib_3d.h
+	gcc -c lib_3d_BH.c
 
-lib_objet3d_etu.o: lib_objet3d_etu.c lib_3d.h
-	gcc -c lib_objet3d_etu.c
+lib_objet3d_BH.o: lib_objet3d_BH.c lib_3d.h
+	gcc -c lib_objet3d_BH.c
 
-lib_scene3d_etu.o: lib_scene3d_etu.c lib_3d.h
-	gcc -c lib_scene3d_etu.c
+lib_scene3d_BH.o: lib_scene3d_BH.c lib_3d.h
+	gcc -c lib_scene3d_BH.c
 
 ###################
 PA_3d.o: lib_3d.c lib_3d.h

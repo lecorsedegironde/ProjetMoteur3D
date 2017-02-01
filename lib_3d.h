@@ -43,64 +43,62 @@ void rotationTriangle3d_PA(t_triangle3d *t, t_point3d *centre, float degreX, flo
 void transformationTriangle3d_PA(t_triangle3d *t, double mat[4][4]);
 
 /*
- * Zone etu
+ * Zone BH
  */
 
-t_point3d *definirPoint3d_etu(double x, double y, double z);
+t_point3d *definirPoint3d_BH(double x, double y, double z);
 
-t_point3d *definirVecteur3d_etu(double x, double y, double z);
+t_point3d *definirVecteur3d_BH(double x, double y, double z);
 
-t_triangle3d *definirTriangle3d_etu(t_point3d *a, t_point3d *b, t_point3d *c);
+t_triangle3d *definirTriangle3d_BH(t_point3d *a, t_point3d *b, t_point3d *c);
 
-t_triangle3d *copierTriangle3d_etu(t_triangle3d *t);
+t_triangle3d *copierTriangle3d_BH(t_triangle3d *t);
 
-void differenceVecteur3d_etu(t_point3d *v1, t_point3d *v2); //v1 = v1-v2
-void sommeVecteur3d_etu(t_point3d *v1, t_point3d *v2); //v1 = v1+v2
-void divisionVecteur3d_etu(t_point3d *v1, int n); //v1 = v1/n
-t_point3d *centreGraviteTriangle3d_etu(t_triangle3d *t);
+void differenceVecteur3d_BH(t_point3d *v1, t_point3d *v2); //v1 = v1-v2
+void sommeVecteur3d_BH(t_point3d *v1, t_point3d *v2); //v1 = v1+v2
+void divisionVecteur3d_BH(t_point3d *v1, int n); //v1 = v1/n
+t_point3d *centreGraviteTriangle3d_BH(t_triangle3d *t);
 
-double zmoyen_etu(t_triangle3d *t);
+double zmoyen_BH(t_triangle3d *t);
 
-void remplirTriangle3d_etu(t_surface *surface, t_triangle3d *triangle, Uint32 c, double l, double h, double d);
+void remplirTriangle3d_BH(t_surface *surface, t_triangle3d *triangle, Uint32 c, double l, double h, double d);
 
-void translationTriangle3d_etu(t_triangle3d *t, t_point3d *vecteur);
+void translationTriangle3d_BH(t_triangle3d *t, t_point3d *vecteur);
 
-void rotationTriangle3d_etu(t_triangle3d *t, t_point3d *centre, float degreX, float degreY, float degreZ);
+void rotationTriangle3d_BH(t_triangle3d *t, t_point3d *centre, float degreX, float degreY, float degreZ);
 
-void transformationTriangle3d_etu(t_triangle3d *t, double mat[4][4]);
+void transformationTriangle3d_BH(t_triangle3d *t, double mat[4][4]);
 
 
 /*
  * Zone a adapter...
  */
 
-static t_point3d *(*definirPoint3d)(double x, double y, double z) = definirPoint3d_PA;
+extern t_point3d *(*definirPoint3d)(double x, double y, double z);
 
-static t_point3d *(*definirVecteur3d)(double x, double y, double z) = definirVecteur3d_PA;
+extern t_point3d *(*definirVecteur3d)(double x, double y, double z);
 
-static t_triangle3d *(*definirTriangle3d)(t_point3d *a, t_point3d *b, t_point3d *c) = definirTriangle3d_PA;
+extern t_triangle3d *(*definirTriangle3d)(t_point3d *a, t_point3d *b, t_point3d *c);
 
-static t_triangle3d *(*copierTriangle3d)(t_triangle3d *t) = copierTriangle3d_PA;
+extern t_triangle3d *(*copierTriangle3d)(t_triangle3d *t);
 
-static void (*differenceVecteur3d)(t_point3d *v1, t_point3d *v2) = differenceVecteur3d_PA;
+extern void (*differenceVecteur3d)(t_point3d *v1, t_point3d *v2);
 
-static void (*sommeVecteur3d)(t_point3d *v1, t_point3d *v2) = sommeVecteur3d_PA;
+extern void (*sommeVecteur3d)(t_point3d *v1, t_point3d *v2);
 
-static void (*divisionVecteur3d)(t_point3d *v1, int n) = divisionVecteur3d_PA;
+extern void (*divisionVecteur3d)(t_point3d *v1, int n);
 
-static t_point3d *(*centreGraviteTriangle3d)(t_triangle3d *t) = centreGraviteTriangle3d_PA;
+extern t_point3d *(*centreGraviteTriangle3d)(t_triangle3d *t);
 
-static double (*zmoyen)(t_triangle3d *t) = zmoyen_PA;
+extern double (*zmoyen)(t_triangle3d *t);
 
-static void (*remplirTriangle3d)(t_surface *surface, t_triangle3d *triangle, Uint32 c, double l, double h,
-                                 double d) = remplirTriangle3d_PA;
+extern void (*remplirTriangle3d)(t_surface *surface, t_triangle3d *triangle, Uint32 c, double l, double h, double d);
 
-static void (*translationTriangle3d)(t_triangle3d *t, t_point3d *vecteur) = translationTriangle3d_PA;
+extern void (*translationTriangle3d)(t_triangle3d *t, t_point3d *vecteur);
 
-static void (*rotationTriangle3d)(t_triangle3d *t, t_point3d *centre, float degreX, float degreY,
-                                  float degreZ) = rotationTriangle3d_PA;
+extern void (*rotationTriangle3d)(t_triangle3d *t, t_point3d *centre, float degreX, float degreY, float degreZ);
 
-static void (*transformationTriangle3d)(t_triangle3d *t, double mat[4][4]) = transformationTriangle3d_PA;
+extern void (*transformationTriangle3d)(t_triangle3d *t, double mat[4][4]);
 
 
 void usage_lib_3d();

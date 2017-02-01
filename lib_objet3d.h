@@ -82,25 +82,25 @@ void transformationObjet3d_etu(t_objet3d* pt_objet, double mat[4][4]);
  * Zone a adapter...
  */
 
-static t_objet3d* (*objet_vide)() = objet_vide_PA;
-static t_objet3d *(*camera)(double l, double h, double n, double f, double d) = camera_PA;
-static t_objet3d* (*parallelepipede)(double lx, double ly, double lz) = parallelepipede_PA;
-static t_objet3d* (*sphere)(double r, double nlat, double nlong) = sphere_PA;
-static t_objet3d* (*sphere_amiga)(double r, double nlat, double nlong) = sphere_amiga_PA;
-static t_objet3d* (*arbre)(double lx, double ly, double lz) = arbre_PA;
-static t_objet3d* (*damier)(double lx, double lz, double nx, double nz) = damier_PA;
-static t_objet3d *(*copierObjet3d)(t_objet3d *o) = copierObjet3d_PA;
-static void (*composerObjet3d)(t_objet3d* o, t_objet3d* o2) = composerObjet3d_PA;
-static void (*composerObjet3d_limite_en_z)(t_objet3d* o, t_objet3d* o2, t_objet3d *camera) = composerObjet3d_limite_en_z_PA;
-static void (*libererObjet3d)(t_objet3d *o) = libererObjet3d_PA;
-static t_point3d *(*centreGraviteObjet3d)(t_objet3d *o) = centreGraviteObjet3d_PA;
-static void (*dessinerObjet3d)(t_surface *surface, t_objet3d* pt_objet, t_objet3d *camera) = dessinerObjet3d_PA;
+extern t_objet3d* (*objet_vide)();
+extern t_objet3d *(*camera)(double l, double h, double n, double f, double d);
+extern t_objet3d* (*parallelepipede)(double lx, double ly, double lz);
+extern t_objet3d* (*sphere)(double r, double nlat, double nlong);
+extern t_objet3d* (*sphere_amiga)(double r, double nlat, double nlong);
+extern t_objet3d* (*arbre)(double lx, double ly, double lz);
+extern t_objet3d* (*damier)(double lx, double lz, double nx, double nz);
+extern t_objet3d *(*copierObjet3d)(t_objet3d *o);
+extern void (*composerObjet3d)(t_objet3d* o, t_objet3d* o2);
+extern void (*composerObjet3d_limite_en_z)(t_objet3d* o, t_objet3d* o2, t_objet3d *camera);
+extern void (*libererObjet3d)(t_objet3d *o);
+extern t_point3d *(*centreGraviteObjet3d)(t_objet3d *o);
+extern void (*dessinerObjet3d)(t_surface *surface, t_objet3d* pt_objet, t_objet3d *camera);
 
-static void (*translationObjet3d)(t_objet3d* pt_objet, t_point3d *vecteur) = translationObjet3d_PA;
-static void (*translationObjet3d_fast)(t_objet3d* pt_objet, t_point3d *vecteur) = translationObjet3d_fast_PA;
-static void (*rotationObjet3d)(t_objet3d* pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) = rotationObjet3d_PA;
-static void (*rotationObjet3d_fast)(t_objet3d* pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) = rotationObjet3d_fast_PA;
-static void (*transformationObjet3d)(t_objet3d* pt_objet, double mat[4][4]) = transformationObjet3d_PA;
+extern void (*translationObjet3d)(t_objet3d* pt_objet, t_point3d *vecteur);
+extern void (*translationObjet3d_fast)(t_objet3d* pt_objet, t_point3d *vecteur);
+extern void (*rotationObjet3d)(t_objet3d* pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ);
+extern void (*rotationObjet3d_fast)(t_objet3d* pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ);
+extern void (*transformationObjet3d)(t_objet3d* pt_objet, double mat[4][4]);
 
 
 

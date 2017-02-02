@@ -5,6 +5,7 @@
 
 /**
  * Déclaration d'un pointeur sur point
+ *
  * @param x coordonée x
  * @param y coordonée y
  * @param z coordonée z
@@ -22,6 +23,7 @@ t_point3d *definirPoint3d_BH(double x, double y, double z) {
 
 /**
  * Déclaration d'un pointeur sur vecteur utilisant un pointeur sur point
+ *
  * @param x coordonée x
  * @param y coordonée y
  * @param z coordonée z
@@ -39,6 +41,7 @@ t_point3d *definirVecteur3d_BH(double x, double y, double z) {
 
 /**
  * Déclaration d'un pointeur sur triangle
+ *
  * @param a le point a du triangle
  * @param b le point b
  * @param c le point c
@@ -55,6 +58,7 @@ t_triangle3d *definirTriangle3d_BH(t_point3d *a, t_point3d *b, t_point3d *c) {
 
 /**
  * Copie un triangle
+ *
  * @param t le pointeur sur le triangle à copier
  * @return le pointeur sur le triangle copié
  */
@@ -71,6 +75,7 @@ t_triangle3d *copierTriangle3d_BH(t_triangle3d *t) {
 /**
  * Différence entre deux vecteurs
  * v1 = v1-v2, le résultat est stocké dans v1
+ *
  * @param v1 le pointeur sur vecteur 1
  * @param v2 le pointeur sur vecteur 2
  */
@@ -84,6 +89,7 @@ void differenceVecteur3d_BH(t_point3d *v1, t_point3d *v2) {
 /**
  * Somme de deux vecteurs
  * v1 = v1+v2
+ *
  * @param v1 le pointeur sur vecteur 1
  * @param v2 le pointeur sur vecteur 2
  */
@@ -97,6 +103,7 @@ void sommeVecteur3d_BH(t_point3d *v1, t_point3d *v2) {
 /**
  * Division d'un vecteur avec n
  * v1 = v1/n
+ *
  * @param v1
  * @param n
  */
@@ -109,6 +116,7 @@ void divisionVecteur3d_BH(t_point3d *v1, int n) {
 
 /**
  * Calcul du centre de gravité d'un triangle
+ *
  * @param t le pointeur sur triangle
  * @return le pointeur sur point
  */
@@ -124,6 +132,7 @@ t_point3d *centreGraviteTriangle3d_BH(t_triangle3d *t) {
 
 /**
  * Calcul du z moyen d'un triangle
+ *
  * @param t le pointeur sur triangle
  * @return la valeur du zmoyen
  */
@@ -132,13 +141,14 @@ double zmoyen_BH(t_triangle3d *t) {
 }
 
 /**
+ * Projection d'un triangle 3d en un trianlge 2d et création de la surface d'affichage
  *
- * @param surface
- * @param triangle
- * @param c
- * @param l
- * @param h
- * @param d
+ * @param surface la surface a remplir avec un triangle 2d
+ * @param triangle le triangle 3d à afficher
+ * @param c la couleur du triangle
+ * @param l paramètre caméra : rapport d'ouverture
+ * @param h paramètre caméra : rapport d'ouverture
+ * @param d paramètre caméra : distance par rapport au point de projection
  */
 void remplirTriangle3d_BH(t_surface *surface, t_triangle3d *triangle, Uint32 c, double l, double h, double d) {
     //Création de la matricez
@@ -177,6 +187,12 @@ void remplirTriangle3d_BH(t_surface *surface, t_triangle3d *triangle, Uint32 c, 
 
 }
 
+/**
+ * Applique une translation au triangle
+ *
+ * @param t le triangle à translater
+ * @param vecteur le vecteur de translation
+ */
 void translationTriangle3d_BH(t_triangle3d *t, t_point3d *vecteur) {
     //Création de la matrice
     double matTranslation[4][4] = {{1, 0, 0, vecteur->xyzt[0]},
@@ -194,6 +210,17 @@ void translationTriangle3d_BH(t_triangle3d *t, t_point3d *vecteur) {
     free(copy);
 }
 
+/**
+ * Applique une rotation au triangle à travers l'utilisation des angles d'euler
+ * On aura pour cela calculé une matrice de rotation à partir de ces angles et on translatera
+ * le triangle à l'origine avant d'appliquer la rotation puis de le retranslater à son point d'origine
+ *
+ * @param t le triangle auquel appliquer la rotation
+ * @param centre vecteur utilisé
+ * @param degreX
+ * @param degreY
+ * @param degreZ
+ */
 void rotationTriangle3d_BH(t_triangle3d *t, t_point3d *centre, float degreX, float degreY, float degreZ) {
     //Transformation des angles d'euler en matrice de rotation
     double a = cos(degreX), b = sin(degreX),
@@ -214,13 +241,14 @@ void rotationTriangle3d_BH(t_triangle3d *t, t_point3d *centre, float degreX, flo
     free(copy->abc[2]);
     free(copy);
     translationTriangle3d(t, centre);
-    free(t->abc[0]);
-    free(t->abc[1]);
-    free(t->abc[2]);
-    free(t);
-    free(centre);
 }
 
+/**
+ * Applique une matrice de transformation donnée à un triangle
+ *
+ * @param t le triangle sur lequel appliquer la matrice
+ * @param mat la matrice à appliquer
+ */
 void transformationTriangle3d_BH(t_triangle3d *t, double mat[4][4]) {
     t_triangle3d *copy = copierTriangle3d(t);
     for (int i = 0; i < 3; ++i) {
@@ -230,4 +258,5 @@ void transformationTriangle3d_BH(t_triangle3d *t, double mat[4][4]) {
     free(copy->abc[1]);
     free(copy->abc[2]);
     free(copy);
+
 }

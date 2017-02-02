@@ -57,12 +57,12 @@ void changerCamera_etu(t_scene3d *pt_objet); // modifie l'arbre de la scene pour
  * Zone a adapter...
  */
 
-static t_scene3d* (*definirScene3d)(t_objet3d *pt_objet) = definirScene3d_PA;
-static t_scene3d* (*ajouter_relation)(t_scene3d* pt_feuille, t_objet3d *pt_objet) = ajouter_relation_PA;
-static void (*translationScene3d)(t_scene3d *pt_scene, t_point3d *vecteur) = translationScene3d_PA;
-static void (*rotationScene3d)(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY, float degreZ) = rotationScene3d_PA;
-static void (*dessinerScene3d)(t_surface *surface, t_scene3d* pt_scene) = dessinerScene3d_PA;
-static void (*changerCamera)(t_scene3d *pt_objet) = changerCamera_PA;
+extern t_scene3d* (*definirScene3d)(t_objet3d *pt_objet);
+extern t_scene3d* (*ajouter_relation)(t_scene3d* pt_feuille, t_objet3d *pt_objet);
+extern void (*translationScene3d)(t_scene3d *pt_scene, t_point3d *vecteur);
+extern void (*rotationScene3d)(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY, float degreZ);
+extern void (*dessinerScene3d)(t_surface *surface, t_scene3d* pt_scene);
+extern void (*changerCamera)(t_scene3d *pt_objet);
 
 
 

@@ -63,12 +63,10 @@ t_triangle3d *definirTriangle3d_BH(t_point3d *a, t_point3d *b, t_point3d *c) {
  * @return le pointeur sur le triangle copié
  */
 t_triangle3d *copierTriangle3d_BH(t_triangle3d *t) {
-    t_triangle3d *copyTriangle = malloc(sizeof(t_triangle3d));
-    for (int i = 0; i < 3; ++i) {
-        t_point3d *copyPoint = definirPoint3d(t->abc[i]->xyzt[0], t->abc[i]->xyzt[1], t->abc[i]->xyzt[2]);
-        copyTriangle->abc[i] = copyPoint;
-    }
-
+    t_triangle3d *copyTriangle = definirTriangle3d(
+            definirPoint3d(t->abc[0]->xyzt[0], t->abc[0]->xyzt[1], t->abc[0]->xyzt[2]),
+            definirPoint3d(t->abc[1]->xyzt[0], t->abc[1]->xyzt[1], t->abc[1]->xyzt[2]),
+            definirPoint3d(t->abc[2]->xyzt[0], t->abc[2]->xyzt[1], t->abc[2]->xyzt[2]));
     return copyTriangle;
 }
 

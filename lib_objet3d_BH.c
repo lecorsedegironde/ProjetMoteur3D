@@ -65,7 +65,6 @@ t_objet3d *camera_BH(double l, double h, double n, double f, double d) {
  */
 t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
     t_objet3d *parallepipede = objet_vide();
-
     //Création des maillons (12 triangles)
     //Maillon pour la chaine
     t_maillon *maillonTMP = NULL;
@@ -155,8 +154,45 @@ t_objet3d *damier_BH(double lx, double lz, double nx, double nz) {}
 
 // attention, effectue une copie mirroir
 t_objet3d *copierObjet3d_BH(t_objet3d *o) {
-    t_objet3d * copy = malloc(sizeof(t_objet3d));
+    t_objet3d *copyObject = malloc(sizeof(t_objet3d));
+    t_maillon *parcoursMaillon = NULL;
+    t_maillon *maillonTMP = NULL;
+    t_bool isHead = true;
 
+    //Copie des propriétés
+    copyObject->est_camera = o->est_camera;
+    copyObject->est_trie = o->est_trie;
+    copyObject->distance_ecran = o->distance_ecran;
+    copyObject->hauteur = o->hauteur;
+    copyObject->largeur = o->largeur;
+    copyObject->loin = o->loin;
+    copyObject->proche = o->proche;
+    //Si camera
+    copyObject->tete = o->tete;
+
+    parcoursMaillon = o->tete;
+
+    while (parcoursMaillon != NULL) {
+        //Création nouveau maillon
+        t_maillon *copyMaillon = malloc(sizeof(t_maillon));
+        copyMaillon->couleur = parcoursMaillon->couleur;
+
+        //Copier beaucoup de triangles semble causer une segfault ou le fait de réutiliser la même variable ?
+        //Dans tous les cas ça marche avec malloc(0)
+        copyMaillon->face = malloc(0);
+        copyMaillon->face = copierTriangle3d(parcoursMaillon->face);
+
+        if (isHead) {
+            copyObject->tete = copyMaillon;
+            isHead = false;
+        } else {
+            maillonTMP->pt_suiv = copyMaillon;
+        }
+        maillonTMP = copyMaillon;
+        //On passe au maillon suivant
+        parcoursMaillon = parcoursMaillon->pt_suiv;
+    }
+    return copyObject;
 }
 
 void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {}

@@ -47,7 +47,7 @@ t_objet3d *(*arbre)(double lx, double ly, double lz) = arbre_PA;
 
 t_objet3d *(*damier)(double lx, double lz, double nx, double nz) = damier_PA;
 
-t_objet3d *(*copierObjet3d)(t_objet3d *o) = copierObjet3d_PA;
+t_objet3d *(*copierObjet3d)(t_objet3d *o) = copierObjet3d_BH;
 
 void (*composerObjet3d)(t_objet3d *o, t_objet3d *o2) = composerObjet3d_PA;
 

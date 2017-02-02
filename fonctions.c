@@ -22,7 +22,7 @@ t_point3d *(*centreGraviteTriangle3d)(t_triangle3d *t) = centreGraviteTriangle3d
 double (*zmoyen)(t_triangle3d *t) = zmoyen_BH;
 
 void (*remplirTriangle3d)(t_surface *surface, t_triangle3d *triangle, Uint32 c, double l, double h,
-                          double d) = remplirTriangle3d_PA;
+                          double d) = remplirTriangle3d_BH;
 
 void (*translationTriangle3d)(t_triangle3d *t, t_point3d *vecteur) = translationTriangle3d_BH;
 

@@ -195,7 +195,18 @@ t_objet3d *copierObjet3d_BH(t_objet3d *o) {
     return copyObject;
 }
 
-void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {}
+void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {
+    //On va quand même tester, voir si c'est pas des cameras
+    //TODO On est censé trier les objets ???
+    if (!o->est_camera && !o2->est_camera) {
+        t_maillon *maillonTMP = o->tete;
+
+        while (maillonTMP->pt_suiv != NULL) {
+            maillonTMP = maillonTMP->pt_suiv;
+        }
+        maillonTMP->pt_suiv = o2->tete;
+    }
+}
 
 void composerObjet3d_limite_en_z_BH(t_objet3d *o, t_objet3d *o2, t_objet3d *camera) {}
 

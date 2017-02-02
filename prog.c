@@ -142,8 +142,8 @@ int main(int argc, char **argv) {
         dessinerScene3d(surface, scene);
 
         majEcran(surface);
-        /* Framerate fixe a env 60 FPS max */
-        //SDL_Delay(MAX(0,(1000./60.)-(SDL_GetTicks()-oldtime)));
+        /* Framerate fixe a env 120 FPS max */
+//        SDL_Delay(MAX(0,(1000./120.)-(SDL_GetTicks()-oldtime)));
         oldtime = SDL_GetTicks();
 
         cpt++;

@@ -174,10 +174,7 @@ void remplirTriangle3d_BH(t_surface *surface, t_triangle3d *triangle, Uint32 c, 
     remplirTriangle2d(surface, triangle2d, c);
 
     //Free pointers
-    free(copy->abc[0]);
-    free(copy->abc[1]);
-    free(copy->abc[2]);
-    free(copy);
+    freeTriangle(copy);
     free(p1);
     free(p2);
     free(p3);
@@ -202,10 +199,7 @@ void translationTriangle3d_BH(t_triangle3d *t, t_point3d *vecteur) {
     for (int i = 0; i < 3; ++i) {
         multiplication_vecteur(t->abc[i], matTranslation, copy->abc[i]);
     }
-    free(copy->abc[0]);
-    free(copy->abc[1]);
-    free(copy->abc[2]);
-    free(copy);
+    freeTriangle(copy);
 }
 
 /**
@@ -234,10 +228,7 @@ void rotationTriangle3d_BH(t_triangle3d *t, t_point3d *centre, float degreX, flo
     for (int i = 0; i < 3; ++i) {
         multiplication_vecteur(t->abc[i], matRotation, copy->abc[i]);
     }
-    free(copy->abc[0]);
-    free(copy->abc[1]);
-    free(copy->abc[2]);
-    free(copy);
+    freeTriangle(copy);
     translationTriangle3d(t, centre);
 }
 
@@ -252,8 +243,17 @@ void transformationTriangle3d_BH(t_triangle3d *t, double mat[4][4]) {
     for (int i = 0; i < 3; ++i) {
         multiplication_vecteur(t->abc[i], mat, copy->abc[i]);
     }
-    free(copy->abc[0]);
-    free(copy->abc[1]);
-    free(copy->abc[2]);
-    free(copy);
+    freeTriangle(copy);
+}
+
+/**
+ * Free le triangle passé en paramètre
+ *
+ * @param t le trianlge à free
+ */
+void freeTriangle(t_triangle3d *t) {
+    free(t->abc[0]);
+    free(t->abc[1]);
+    free(t->abc[2]);
+    free(t);
 }

@@ -69,7 +69,7 @@ void rotationTriangle3d_BH(t_triangle3d *t, t_point3d *centre, float degreX, flo
 
 void transformationTriangle3d_BH(t_triangle3d *t, double mat[4][4]);
 
-
+void freeTriangle(t_triangle3d *t);
 /*
  * Zone a adapter...
  */

@@ -53,7 +53,7 @@ void (*composerObjet3d)(t_objet3d *o, t_objet3d *o2) = composerObjet3d_BH;
 
 void (*composerObjet3d_limite_en_z)(t_objet3d *o, t_objet3d *o2, t_objet3d *camera) = composerObjet3d_limite_en_z_PA;
 
-void (*libererObjet3d)(t_objet3d *o) = libererObjet3d_PA;
+void (*libererObjet3d)(t_objet3d *o) = libererObjet3d_BH;
 
 t_point3d *(*centreGraviteObjet3d)(t_objet3d *o) = centreGraviteObjet3d_PA;
 

@@ -258,5 +258,4 @@ void transformationTriangle3d_BH(t_triangle3d *t, double mat[4][4]) {
     free(copy->abc[1]);
     free(copy->abc[2]);
     free(copy);
-
 }

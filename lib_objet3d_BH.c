@@ -1,35 +1,180 @@
 #include "lib_objet3d.h"
 
-t_objet3d *objet_vide_PA() {}
+#define PARA_A definirPoint3d(-lx/2, -ly/2, -lz/2)
+#define PARA_B definirPoint3d(lx/2, -ly/2, -lz/2)
+#define PARA_C definirPoint3d(lx/2, ly/2, -lz/2)
+#define PARA_D definirPoint3d(-lx/2, ly/2, -lz/2)
+#define PARA_E definirPoint3d(-lx/2, -ly/2, lz/2)
+#define PARA_F definirPoint3d(lx/2, -ly/2, lz/2)
+#define PARA_G definirPoint3d(lx/2, ly/2, lz/2)
+#define PARA_H definirPoint3d(-lx/2, ly/2, lz/2)
 
-t_objet3d *camera_PA(double l, double h, double n, double f, double d) {} // zone l*h dans le champ n->f
-t_objet3d *parallelepipede_PA(double lx, double ly, double lz) {}
+/**
+ * Crée un objet 3d vide
+ * Cet objet n'est pas une camera
+ *
+ * @return un pointeur sur objet3d
+ */
+t_objet3d *objet_vide_BH() {
 
-t_objet3d *sphere_PA(double r, double nlat, double nlong) {}
+    t_objet3d *objet3d = malloc(sizeof(t_objet3d));
 
-t_objet3d *sphere_amiga_PA(double r, double nlat, double nlong) {}
+    objet3d->est_trie = true;
+    objet3d->est_camera = false;
+    objet3d->tete = NULL;
 
-t_objet3d *arbre_PA(double lx, double ly, double lz) {}
+    return objet3d;
+}
 
-t_objet3d *damier_PA(double lx, double lz, double nx, double nz) {}
+/**
+ * Crée une camera
+ * zone l*h dans le champ n->f
+ *
+ * @param l
+ * @param h
+ * @param n
+ * @param f
+ * @param d
+ * @return un pointeur sur camera
+ */
+t_objet3d *camera_BH(double l, double h, double n, double f, double d) {
 
-t_objet3d *copierObjet3d_PA(t_objet3d *o) {} // attention, effectue une copie mirroir
-void composerObjet3d_PA(t_objet3d *o, t_objet3d *o2) {}
+    t_objet3d *camera = malloc(sizeof(t_objet3d));
 
-void composerObjet3d_limite_en_z_PA(t_objet3d *o, t_objet3d *o2, t_objet3d *camera) {}
+    camera->est_trie = false;
+    camera->est_camera = true;
 
-void libererObjet3d_PA(t_objet3d *o) {}
+    camera->largeur = l;
+    camera->hauteur = h;
+    camera->proche = n;
+    camera->loin = f;
+    camera->distance_ecran = d;
 
-t_point3d *centreGraviteObjet3d_PA(t_objet3d *o) {}
+    camera->tete = NULL;
 
-void dessinerObjet3d_PA(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) {}
+    return camera;
+}
 
-void translationObjet3d_PA(t_objet3d *pt_objet, t_point3d *vecteur) {}
+/**
+ * Création d'un parallépipède
+ *
+ * @param lx longeur x
+ * @param ly largeur x
+ * @param lz profondeur z
+ * @return un pointeur sur objet 3d parallépipède
+ */
+t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
+    t_objet3d *parallepipede = objet_vide();
 
-void translationObjet3d_fast_PA(t_objet3d *pt_objet, t_point3d *vecteur) {}
+    //Création des maillons (12 triangles)
+    //Maillon pour la chaine
+    t_maillon *maillonTMP = NULL;
 
-void rotationObjet3d_PA(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {}
+    for (int i = 0; i < 12; ++i) {
+        t_maillon *maillon = malloc(sizeof(t_maillon));
 
-void rotationObjet3d_fast_PA(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {}
+        switch (i) {
+            case 0:
+                //ADB
+                maillon->face = definirTriangle3d(PARA_A, PARA_D, PARA_B);
+                maillon->couleur = ROUGEC;
+                break;
+            case 1:
+                //DCB
+                maillon->face = definirTriangle3d(PARA_D, PARA_C, PARA_B);
+                maillon->couleur = ROUGEF;
+                break;
+            case 2:
+                //DCH
+                maillon->face = definirTriangle3d(PARA_D, PARA_C, PARA_H);
+                maillon->couleur = VERTC;
+                break;
+            case 3:
+                //HCG
+                maillon->face = definirTriangle3d(PARA_H, PARA_C, PARA_G);
+                maillon->couleur = VERTF;
+                break;
+            case 4:
+                //HGE
+                maillon->face = definirTriangle3d(PARA_H, PARA_G, PARA_E);
+                maillon->couleur = BLEUC;
+                break;
+            case 5:
+                //EGF
+                maillon->face = definirTriangle3d(PARA_E, PARA_G, PARA_F);
+                maillon->couleur = BLEUF;
+                break;
+            case 6:
+                //EFA
+                maillon->face = definirTriangle3d(PARA_E, PARA_F, PARA_A);
+                maillon->couleur = JAUNEC;
+                break;
+            case 7:
+                //AFB
+                maillon->face = definirTriangle3d(PARA_A, PARA_F, PARA_B);
+                maillon->couleur = JAUNEF;
+                break;
+            case 8:
+                //HED
+                maillon->face = definirTriangle3d(PARA_H, PARA_E, PARA_D);
+                maillon->couleur = PALEC;
+                break;
+            case 9:
+                //DEA
+                maillon->face = definirTriangle3d(PARA_D, PARA_E, PARA_A);
+                maillon->couleur = PALEF;
+                break;
+            case 10:
+                //FGB
+                maillon->face = definirTriangle3d(PARA_F, PARA_G, PARA_B);
+                maillon->couleur = ROSEC;
+                break;
+            case 11:
+                //BGC
+                maillon->face = definirTriangle3d(PARA_B, PARA_G, PARA_C);
+                maillon->couleur = ROSEF;
+                break;
+            default:
+                //WTF?
+                return NULL;
+        }
 
-void transformationObjet3d_PA(t_objet3d *pt_objet, double mat[4][4]) {}
+        !i ? (parallepipede->tete = maillon) : (maillonTMP->pt_suiv = maillon);
+        maillonTMP = maillon;
+    }
+    return parallepipede;
+}
+
+t_objet3d *sphere_BH(double r, double nlat, double nlong) {}
+
+t_objet3d *sphere_amiga_BH(double r, double nlat, double nlong) {}
+
+t_objet3d *arbre_BH(double lx, double ly, double lz) {}
+
+t_objet3d *damier_BH(double lx, double lz, double nx, double nz) {}
+
+// attention, effectue une copie mirroir
+t_objet3d *copierObjet3d_BH(t_objet3d *o) {
+    t_objet3d * copy = malloc(sizeof(t_objet3d));
+
+}
+
+void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {}
+
+void composerObjet3d_limite_en_z_BH(t_objet3d *o, t_objet3d *o2, t_objet3d *camera) {}
+
+void libererObjet3d_BH(t_objet3d *o) {}
+
+t_point3d *centreGraviteObjet3d_BH(t_objet3d *o) {}
+
+void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) {}
+
+void translationObjet3d_BH(t_objet3d *pt_objet, t_point3d *vecteur) {}
+
+void translationObjet3d_fast_BH(t_objet3d *pt_objet, t_point3d *vecteur) {}
+
+void rotationObjet3d_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {}
+
+void rotationObjet3d_fast_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {}
+
+void transformationObjet3d_BH(t_objet3d *pt_objet, double mat[4][4]) {}

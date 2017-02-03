@@ -110,7 +110,7 @@ void frontBackSplit(t_maillon *source, t_maillon **frontRef, t_maillon **backRef
 
 t_maillon *sortedMergeZ(t_maillon *a, t_maillon *b);
 
-
+t_maillon *cloneMaillon(t_maillon* liste);
 
 /*
  * Zone a adapter...

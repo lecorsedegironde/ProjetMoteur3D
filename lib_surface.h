@@ -51,9 +51,11 @@
 (c==JAUNEF)?"JAUNEF":(\
 (c==PALEC)?"PALEC":(\
 (c==PALEF)?"PALEF":(\
-(c==ROSEC?"ROSEC":(\
+(c==ROSEC)?"ROSEC":(\
 (c==ROSEF)?"ROSEF":(\
-"AUTRE"))))))))))))))))))
+(c==MARRON1)?"MARRON1":(\
+(c==MARRON2)?"MARRON2":(\
+"AUTRE")))))))))))))))))))
 
 
 typedef struct {

@@ -78,12 +78,12 @@ t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
             case 0:
                 //ABC Arrière par rapport cam défaut
                 maillon->face = definirTriangle3d(PARA_A, PARA_B, PARA_C);
-                maillon->couleur = ROUGEC;
+                maillon->couleur = MARRON2;
                 break;
             case 1:
-                //ACD Arrière par rapport cam défaut
+                //ACD Arrière par rapport cam défaut TRIANGLE S'AFFICHE PAS !
                 maillon->face = definirTriangle3d(PARA_A, PARA_C, PARA_D);
-                maillon->couleur = ROUGEC;
+                maillon->couleur = MARRON1;
                 break;
             case 2:
                 //DCG
@@ -98,42 +98,42 @@ t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
             case 4:
                 //HGF
                 maillon->face = definirTriangle3d(PARA_H, PARA_G, PARA_F);
-                maillon->couleur = VERTC;
+                maillon->couleur = BLEUC;
                 break;
             case 5:
                 //HFE
                 maillon->face = definirTriangle3d(PARA_H, PARA_F, PARA_E);
-                maillon->couleur = VERTC;
+                maillon->couleur = BLEUC;
                 break;
             case 6:
                 //EFB
                 maillon->face = definirTriangle3d(PARA_E, PARA_F, PARA_B);
-                maillon->couleur = VERTC;
+                maillon->couleur = JAUNEC;
                 break;
             case 7:
                 //AEB
                 maillon->face = definirTriangle3d(PARA_A, PARA_E, PARA_B);
-                maillon->couleur = VERTC;
+                maillon->couleur = JAUNEC;
                 break;
             case 8:
-                //HDE
-                maillon->face = definirTriangle3d(PARA_H, PARA_D, PARA_E);
-                maillon->couleur = VERTC;
+                //HAE
+                maillon->face = definirTriangle3d(PARA_H, PARA_A, PARA_E);
+                maillon->couleur = PALEC;
                 break;
             case 9:
                 //HAD
                 maillon->face = definirTriangle3d(PARA_H, PARA_A, PARA_D);
-                maillon->couleur = VERTC;
+                maillon->couleur = PALEC;
                 break;
             case 10:
                 //FGC
                 maillon->face = definirTriangle3d(PARA_F, PARA_G, PARA_C);
-                maillon->couleur = VERTC;
+                maillon->couleur = ROSEC;
                 break;
             case 11:
                 //FCB
                 maillon->face = definirTriangle3d(PARA_F, PARA_C, PARA_B);
-                maillon->couleur = VERTC;
+                maillon->couleur = ROSEC;
                 break;
             default:
                 //WTF?
@@ -143,6 +143,11 @@ t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
         !i ? (parallepipede->tete = maillon) : (maillonTMP->pt_suiv = maillon);
         maillonTMP = maillon;
     }
+
+    //TODO Ici ça ne marche pas
+//    mergeSortZ(&parallepipede->tete);
+//    parallepipede->est_trie = true;
+
     return parallepipede;
 }
 
@@ -157,50 +162,35 @@ t_objet3d *damier_BH(double lx, double lz, double nx, double nz) {}
 // attention, effectue une copie mirroir
 /**
  * Effectuer une copie d'un objet 3d en dupliquant tous ses maillons
- *
  * @param o l'objet à copier
  * @return un pointeur sur la copie de l'objet
  */
 t_objet3d *copierObjet3d_BH(t_objet3d *o) {
-    t_objet3d *copyObject = malloc(sizeof(t_objet3d));
+    t_objet3d *copyObject;
     t_maillon *parcoursMaillon = NULL;
     t_maillon *maillonTMP = NULL;
     t_bool isHead = true;
 
     //Copie des propriétés
-    copyObject->est_camera = o->est_camera;
-    copyObject->est_trie = o->est_trie;
-    copyObject->distance_ecran = o->distance_ecran;
-    copyObject->hauteur = o->hauteur;
-    copyObject->largeur = o->largeur;
-    copyObject->loin = o->loin;
-    copyObject->proche = o->proche;
-
-    //Si camera, un peu con mais on sait jamais
-    copyObject->tete = o->tete;
-
-    parcoursMaillon = o->tete;
-
-    while (parcoursMaillon != NULL) {
-        //Création nouveau maillon
-        t_maillon *copyMaillon = malloc(sizeof(t_maillon));
-        copyMaillon->couleur = parcoursMaillon->couleur;
-
-        //Copier beaucoup de triangles semble causer une segfault ou le fait de réutiliser la même variable ?
-        //Dans tous les cas ça marche avec malloc(0) ou pas
-        copyMaillon->face = copierTriangle3d(parcoursMaillon->face);
-
-        if (isHead) {
-            copyObject->tete = copyMaillon;
-            isHead = false;
-        } else {
-            maillonTMP->pt_suiv = copyMaillon;
-        }
-        maillonTMP = copyMaillon;
-        //On passe au maillon suivant
-        parcoursMaillon = parcoursMaillon->pt_suiv;
+    if (o->est_camera == true) {
+        copyObject = camera(o->largeur, o->hauteur, o->proche, o->loin, o->distance_ecran);
+    } else {
+        copyObject = objet_vide();
+        copyObject->tete = cloneMaillon(o->tete);
+        mergeSortZ(&copyObject->tete);
     }
     return copyObject;
+}
+
+t_maillon *cloneMaillon(t_maillon *list) {
+    if (list == NULL) {
+        return NULL;
+    }
+    t_maillon *newMaillon = malloc(sizeof(t_maillon));
+    newMaillon->couleur = list->couleur;
+    newMaillon->face = copierTriangle3d(list->face);
+    newMaillon->pt_suiv = cloneMaillon(list->pt_suiv);
+    return newMaillon;
 }
 
 /**
@@ -211,7 +201,6 @@ t_objet3d *copierObjet3d_BH(t_objet3d *o) {
  */
 void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {
     //On va quand même tester, voir si c'est pas des cameras
-    //TODO On est censé trier les objets ???
     if (!o->est_camera && !o2->est_camera) {
         t_maillon *maillonTMP = o->tete;
 
@@ -219,9 +208,6 @@ void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {
             maillonTMP = maillonTMP->pt_suiv;
         }
         maillonTMP->pt_suiv = o2->tete;
-        //Tri de l'objet
-        mergeSortZ(&maillonTMP);
-        o->est_trie = true;
     }
 
     free(o2);
@@ -229,7 +215,7 @@ void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {
 
 
 void composerObjet3d_limite_en_z_BH(t_objet3d *o, t_objet3d *o2, t_objet3d *camera) {
-    //Trier les triangles, du plus loin au plus proche
+    //Trier les triangles, du plus loin au plus proche ?
 
 }
 
@@ -286,25 +272,29 @@ t_point3d *centreGraviteObjet3d_BH(t_objet3d *o) {
  */
 void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) {
     t_maillon *maillonTMP = pt_objet->tete;
-//    t_maillon *first = NULL;
-
-//    Invert list
-//    while (maillonTMP != NULL) {
-//        t_maillon *nextMaillon = maillonTMP->pt_suiv;
-//        maillonTMP->pt_suiv = first;
-//        first = maillonTMP;
-//        maillonTMP = nextMaillon;
-//    }
-//
-//    maillonTMP = first;
 
     //Trier liste
     mergeSortZ(&maillonTMP);
 
-    while (maillonTMP != NULL) {
+    t_maillon *first = NULL;
 
+//    Invert list
+    while (maillonTMP != NULL) {
+        t_maillon *nextMaillon = maillonTMP->pt_suiv;
+        maillonTMP->pt_suiv = first;
+        first = maillonTMP;
+        maillonTMP = nextMaillon;
+    }
+
+    maillonTMP = first;
+
+
+    while (maillonTMP != NULL) {
         remplirTriangle3d(surface, maillonTMP->face, maillonTMP->couleur, camera->largeur, camera->hauteur,
                           camera->distance_ecran);
+        if (maillonTMP->couleur == MARRON1 || maillonTMP->couleur == MARRON2) {
+            printf("Haha lol je suis affiché %s\n", COULEUR(maillonTMP->couleur));
+        }
         maillonTMP = maillonTMP->pt_suiv;
     }
 }
@@ -435,10 +425,11 @@ void frontBackSplit(t_maillon *source, t_maillon **frontRef, t_maillon **backRef
 
 /**
  * Fusionne deux listes triées
+ * /!\ Fusion récursive : changer pour itérative ?
  *
  * @param a liste 1
  * @param b liste 2
- * @return une liste triée
+ * @return une liste triée dans le bon ordre
  */
 t_maillon *sortedMergeZ(t_maillon *a, t_maillon *b) {
     t_maillon *result = NULL;
@@ -450,7 +441,7 @@ t_maillon *sortedMergeZ(t_maillon *a, t_maillon *b) {
         result = a;
     } else {
         //Ici on vérifie l'ordre des données
-        if (zmoyen(a->face) <= zmoyen(b->face)) {
+        if (zmoyen(a->face) >= zmoyen(b->face)) {
             result = a;
             //Récursion
             result->pt_suiv = sortedMergeZ(a->pt_suiv, b);

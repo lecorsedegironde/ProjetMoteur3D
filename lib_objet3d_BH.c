@@ -284,18 +284,20 @@ t_point3d *centreGraviteObjet3d_BH(t_objet3d *o) {
  */
 void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) {
     t_maillon *maillonTMP = pt_objet->tete;
-    t_maillon *first = NULL;
+//    t_maillon *first = NULL;
 
 //    Invert list
-    while (maillonTMP != NULL) {
-        t_maillon *nextMaillon = maillonTMP->pt_suiv;
-        maillonTMP->pt_suiv = first;
-        first = maillonTMP;
-        maillonTMP = nextMaillon;
-    }
+//    while (maillonTMP != NULL) {
+//        t_maillon *nextMaillon = maillonTMP->pt_suiv;
+//        maillonTMP->pt_suiv = first;
+//        first = maillonTMP;
+//        maillonTMP = nextMaillon;
+//    }
+//
+//    maillonTMP = first;
 
-    maillonTMP = first;
-
+    //Trier liste
+    mergeSortZ(&maillonTMP);
 
     while (maillonTMP != NULL) {
 
@@ -359,4 +361,102 @@ void transformationObjet3d_BH(t_objet3d *pt_objet, double mat[4][4]) {
         transformationTriangle3d(maillonTMP->face, mat);
         maillonTMP = maillonTMP->pt_suiv;
     }
+}
+
+/**
+ * MergeSort pour pouvoir trier la liste en fonction des z_moyens
+ *
+ * @param pMaillon le pointeur sur la liste à trier
+ */
+void mergeSortZ(t_maillon **pMaillon) {
+    //Création des pointeurs temporaires
+    t_maillon *head = *pMaillon;
+    t_maillon *a;
+    t_maillon *b;
+
+    //Si la liste est vide ou ne contient qu'un seul élémet -> On quitte
+    if (head != NULL) {
+        if (head->pt_suiv != NULL) {
+            //Divise la liste en 2
+            frontBackSplit(head, &a, &b);
+
+            //Tri récursif de ces deux parties
+            mergeSortZ(&a);
+            mergeSortZ(&b);
+
+            //On fusionne les deux listes triées
+            *pMaillon = sortedMergeZ(a, b);
+        }
+    }
+}
+
+/**
+ * Permet de diviser une liste en deux
+ * Si il a un nombre impair de maillons -> dans la première partie
+ * Méthode des pointeurs fast and slow
+ *
+ * @param source la liste a trier
+ * @param frontRef pointeur sur la première partie
+ * @param backRef pointeur sur la seconde partie
+ */
+void frontBackSplit(t_maillon *source, t_maillon **frontRef, t_maillon **backRef) {
+    t_maillon *fast;
+    t_maillon *slow;
+
+    //Si la liste fait moins de 2 maillons
+    if (source == NULL || source->pt_suiv == NULL) {
+        //On met la liste dans la tête et on renvoie NULL dans la deuxième liste
+        *frontRef = source;
+        *backRef = NULL;
+    } else {
+        //Le pointeur fast va deux fois plus vite que le pointeur slow donc lorsqu'il arrive à la fin de la liste
+        //l'autre ne sera qu'au milieu de celle-ci
+        slow = source;
+        fast = source->pt_suiv;
+
+        while (fast != NULL) {
+            fast = fast->pt_suiv;
+            //Si celui-ci n'est pas NULL -> pas à la fin de la liste on peut avancer
+            if (fast != NULL) {
+                //On peut donc avancer slow ici (pour pouvoir avoir le cas des listes de longueur impaire)
+                slow = slow->pt_suiv;
+                fast = fast->pt_suiv;
+            }
+        }
+        //Donc slow est au milieu de la liste
+        *frontRef = source;
+        *backRef = slow->pt_suiv;
+        //Divise la liste en deux :
+        slow->pt_suiv = NULL;
+    }
+}
+
+/**
+ * Fusionne deux listes triées
+ *
+ * @param a liste 1
+ * @param b liste 2
+ * @return une liste triée
+ */
+t_maillon *sortedMergeZ(t_maillon *a, t_maillon *b) {
+    t_maillon *result = NULL;
+
+    //Cas de bases
+    if (a == NULL) {
+        result = b;
+    } else if (b == NULL) {
+        result = a;
+    } else {
+        //Ici on vérifie l'ordre des données
+        if (zmoyen(a->face) <= zmoyen(b->face)) {
+            result = a;
+            //Récursion
+            result->pt_suiv = sortedMergeZ(a->pt_suiv, b);
+        } else {
+            result = b;
+            //Récursion
+            result->pt_suiv = sortedMergeZ(a, b->pt_suiv);
+        }
+    }
+    return result;
 }

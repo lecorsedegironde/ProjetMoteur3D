@@ -57,7 +57,7 @@ void (*libererObjet3d)(t_objet3d *o) = libererObjet3d_BH;
 
 t_point3d *(*centreGraviteObjet3d)(t_objet3d *o) = centreGraviteObjet3d_BH;
 
-void (*dessinerObjet3d)(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) = dessinerObjet3d_PA;
+void (*dessinerObjet3d)(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) = dessinerObjet3d_BH;
 
 void (*translationObjet3d)(t_objet3d *pt_objet, t_point3d *vecteur) = translationObjet3d_BH;
 

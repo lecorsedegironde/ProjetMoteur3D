@@ -1,4 +1,6 @@
+#include <math.h>
 #include "lib_objet3d.h"
+#include "lib_3d.h"
 
 #define PARA_A definirPoint3d(-lx/2, -ly/2, -lz/2)
 #define PARA_B definirPoint3d(lx/2, -ly/2, -lz/2)
@@ -19,7 +21,7 @@ t_objet3d *objet_vide_BH() {
 
     t_objet3d *objet3d = malloc(sizeof(t_objet3d));
 
-    objet3d->est_trie = true;
+    objet3d->est_trie = false;
     objet3d->est_camera = false;
     objet3d->tete = NULL;
 
@@ -185,9 +187,8 @@ t_objet3d *copierObjet3d_BH(t_objet3d *o) {
         copyMaillon->couleur = parcoursMaillon->couleur;
 
         //Copier beaucoup de triangles semble causer une segfault ou le fait de réutiliser la même variable ?
-        //Dans tous les cas ça marche avec malloc(0)
-        copyMaillon->face = malloc(0);
-        copyMaillon->face = copierTriangle3d(parcoursMaillon->face);
+        //Dans tous les cas ça marche avec malloc(0) ou pas
+        copyMaillon->face = definirTriangle3d(ORIGIN, ORIGIN, ORIGIN);
         copyMaillon->face = copierTriangle3d(parcoursMaillon->face);
 
         if (isHead) {
@@ -220,6 +221,8 @@ void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {
         }
         maillonTMP->pt_suiv = o2->tete;
     }
+
+    free(o2);
 }
 
 
@@ -252,16 +255,108 @@ void libererObjet3d_BH(t_objet3d *o) {
  * @param o objet dont on veut le centre de gravité
  * @return le centre de gravité
  */
-t_point3d *centreGraviteObjet3d_BH(t_objet3d *o) {}
+t_point3d *centreGraviteObjet3d_BH(t_objet3d *o) {
+    //Récupère les centres de gravité de tous les triangles et on les ajoute
+    int i = 0; //Nb triangles
+    double x = 0, y = 0, z = 0;
+    t_maillon *maillonTMP = o->tete;
 
-void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) {}
+    while (maillonTMP != NULL) {
+        t_point3d *point3d = centreGraviteTriangle3d(maillonTMP->face);
+        x += point3d->xyzt[0];
+        y += point3d->xyzt[1];
+        z += point3d->xyzt[2];
+        free(point3d);
+        maillonTMP = maillonTMP->pt_suiv;
+        ++i;
+    }
 
-void translationObjet3d_BH(t_objet3d *pt_objet, t_point3d *vecteur) {}
+    return definirPoint3d(x / i, y / i, z / i);
+}
+
+/**
+ * On parcours l'objet pour dessiner chaque triangle
+ *
+ * @version 1 peintre
+ * @param surface
+ * @param pt_objet
+ * @param camera
+ */
+void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) {
+    t_maillon *maillonTMP = pt_objet->tete;
+    t_maillon *first = NULL;
+
+//    Invert list
+    while (maillonTMP != NULL) {
+        t_maillon *nextMaillon = maillonTMP->pt_suiv;
+        maillonTMP->pt_suiv = first;
+        first = maillonTMP;
+        maillonTMP = nextMaillon;
+    }
+
+    maillonTMP = first;
+
+
+    while (maillonTMP != NULL) {
+
+        remplirTriangle3d(surface, maillonTMP->face, maillonTMP->couleur, camera->largeur, camera->hauteur,
+                          camera->distance_ecran);
+        maillonTMP = maillonTMP->pt_suiv;
+    }
+}
+
+/**
+ * Pour chaque maillon appliquer la translation
+ *
+ * @param pt_objet
+ * @param vecteur
+ */
+void translationObjet3d_BH(t_objet3d *pt_objet, t_point3d *vecteur) {
+    //Création de la matrice
+    double matTranslation[4][4] = {{1, 0, 0, vecteur->xyzt[0]},
+                                   {0, 1, 0, vecteur->xyzt[1]},
+                                   {0, 0, 1, vecteur->xyzt[2]},
+                                   {0, 0, 0, 1}};
+    transformationObjet3d(pt_objet, matTranslation);
+}
 
 void translationObjet3d_fast_BH(t_objet3d *pt_objet, t_point3d *vecteur) {}
 
-void rotationObjet3d_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {}
+/**
+ * Applique une rotation à un objet 3d
+ *
+ * @param pt_objet
+ * @param centre
+ * @param degreX
+ * @param degreY
+ * @param degreZ
+ */
+void rotationObjet3d_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {
+//Création de la matrice de rotation
+    double a = cos(degreX), b = sin(degreX), c = cos(degreY), d = sin(degreY), e = cos(degreZ), f = sin(degreZ);
+    double matRotation[4][4] = {{c * e,                (-c) * f,             d,        0},
+                                {b * d * e + a * f,    -(b * d * f) + a * e, -(b * c), 0},
+                                {-(a * d * e) + b * f, a * d * f + b * e,    a * c,    0},
+                                {0,                    0,                    0,        1}};
+    translationObjet3d(pt_objet, ORIGIN);
+    transformationObjet3d(pt_objet, matRotation);
+    translationObjet3d(pt_objet, centre);
+}
 
 void rotationObjet3d_fast_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {}
 
-void transformationObjet3d_BH(t_objet3d *pt_objet, double mat[4][4]) {}
+
+/**
+ * Applique une matrice de transformation à un objet
+ *
+ * @param pt_objet
+ * @param mat
+ */
+void transformationObjet3d_BH(t_objet3d *pt_objet, double mat[4][4]) {
+    t_maillon *maillonTMP = pt_objet->tete;
+
+    while (maillonTMP != NULL) {
+        transformationTriangle3d(maillonTMP->face, mat);
+        maillonTMP = maillonTMP->pt_suiv;
+    }
+}

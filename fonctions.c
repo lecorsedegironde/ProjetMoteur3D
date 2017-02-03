@@ -55,21 +55,21 @@ void (*composerObjet3d_limite_en_z)(t_objet3d *o, t_objet3d *o2, t_objet3d *came
 
 void (*libererObjet3d)(t_objet3d *o) = libererObjet3d_BH;
 
-t_point3d *(*centreGraviteObjet3d)(t_objet3d *o) = centreGraviteObjet3d_PA;
+t_point3d *(*centreGraviteObjet3d)(t_objet3d *o) = centreGraviteObjet3d_BH;
 
 void (*dessinerObjet3d)(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) = dessinerObjet3d_PA;
 
-void (*translationObjet3d)(t_objet3d *pt_objet, t_point3d *vecteur) = translationObjet3d_PA;
+void (*translationObjet3d)(t_objet3d *pt_objet, t_point3d *vecteur) = translationObjet3d_BH;
 
 void (*translationObjet3d_fast)(t_objet3d *pt_objet, t_point3d *vecteur) = translationObjet3d_fast_PA;
 
 void (*rotationObjet3d)(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY,
-                        float degreZ) = rotationObjet3d_PA;
+                        float degreZ) = rotationObjet3d_BH;
 
 void (*rotationObjet3d_fast)(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY,
                              float degreZ) = rotationObjet3d_fast_PA;
 
-void (*transformationObjet3d)(t_objet3d *pt_objet, double mat[4][4]) = transformationObjet3d_PA;
+void (*transformationObjet3d)(t_objet3d *pt_objet, double mat[4][4]) = transformationObjet3d_BH;
 /** END SECTION OBJET_3D **/
 
 /** START SECTION SCENE_3D **/

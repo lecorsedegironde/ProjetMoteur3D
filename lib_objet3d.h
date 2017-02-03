@@ -104,6 +104,14 @@ void rotationObjet3d_fast_BH(t_objet3d *pt_objet, t_point3d *centre, float degre
 
 void transformationObjet3d_BH(t_objet3d *pt_objet, double mat[4][4]);
 
+void mergeSort(t_objet3d **o);
+
+void frontBackSplit(t_objet3d *source, t_objet3d **frontRef, t_objet3d **backRef);
+
+t_objet3d *sortedMerge(t_objet3d *a, t_objet3d *b);
+
+
+
 /*
  * Zone a adapter...
  */

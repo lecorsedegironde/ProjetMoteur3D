@@ -7,6 +7,8 @@
 #define FX 1
 #define FY 0.2
 
+#define ORIGIN definirPoint3d(0,0,0)
+
 typedef struct {
     double xyzt[4];
 } t_point3d;

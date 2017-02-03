@@ -125,8 +125,9 @@ int main(int argc, char **argv) {
     timestart = SDL_GetTicks();
     oldtime = timestart;
 
-    while (++i < DUREE * 60 && event.type != SDL_QUIT) // DUREE " * 60FPS
+    while (/*++i < DUREE * 60 && */event.type != SDL_QUIT) // DUREE " * 60FPS
     {
+        ++i;
         effacerFenetre(surface, 0);
 
         if (SDL_PollEvent(&event)) {

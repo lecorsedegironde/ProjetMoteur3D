@@ -76,14 +76,14 @@ t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
 
         switch (i) {
             case 0:
-                //ABC
+                //ABC Arrière par rapport cam défaut
                 maillon->face = definirTriangle3d(PARA_A, PARA_B, PARA_C);
                 maillon->couleur = ROUGEC;
                 break;
             case 1:
-                //ACD
+                //ACD Arrière par rapport cam défaut
                 maillon->face = definirTriangle3d(PARA_A, PARA_C, PARA_D);
-                maillon->couleur = ROUGEF;
+                maillon->couleur = ROUGEC;
                 break;
             case 2:
                 //DCG
@@ -93,47 +93,47 @@ t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
             case 3:
                 //DGH
                 maillon->face = definirTriangle3d(PARA_D, PARA_G, PARA_H);
-                maillon->couleur = VERTF;
+                maillon->couleur = VERTC;
                 break;
             case 4:
                 //HGF
                 maillon->face = definirTriangle3d(PARA_H, PARA_G, PARA_F);
-                maillon->couleur = BLEUC;
+                maillon->couleur = VERTC;
                 break;
             case 5:
                 //HFE
                 maillon->face = definirTriangle3d(PARA_H, PARA_F, PARA_E);
-                maillon->couleur = BLEUF;
+                maillon->couleur = VERTC;
                 break;
             case 6:
                 //EFB
                 maillon->face = definirTriangle3d(PARA_E, PARA_F, PARA_B);
-                maillon->couleur = JAUNEC;
+                maillon->couleur = VERTC;
                 break;
             case 7:
                 //AEB
                 maillon->face = definirTriangle3d(PARA_A, PARA_E, PARA_B);
-                maillon->couleur = JAUNEF;
+                maillon->couleur = VERTC;
                 break;
             case 8:
                 //HDE
                 maillon->face = definirTriangle3d(PARA_H, PARA_D, PARA_E);
-                maillon->couleur = PALEC;
+                maillon->couleur = VERTC;
                 break;
             case 9:
                 //HAD
                 maillon->face = definirTriangle3d(PARA_H, PARA_A, PARA_D);
-                maillon->couleur = PALEF;
+                maillon->couleur = VERTC;
                 break;
             case 10:
                 //FGC
                 maillon->face = definirTriangle3d(PARA_F, PARA_G, PARA_C);
-                maillon->couleur = ROSEC;
+                maillon->couleur = VERTC;
                 break;
             case 11:
                 //FCB
                 maillon->face = definirTriangle3d(PARA_F, PARA_C, PARA_B);
-                maillon->couleur = ROSEF;
+                maillon->couleur = VERTC;
                 break;
             default:
                 //WTF?
@@ -188,7 +188,6 @@ t_objet3d *copierObjet3d_BH(t_objet3d *o) {
 
         //Copier beaucoup de triangles semble causer une segfault ou le fait de réutiliser la même variable ?
         //Dans tous les cas ça marche avec malloc(0) ou pas
-        copyMaillon->face = definirTriangle3d(ORIGIN, ORIGIN, ORIGIN);
         copyMaillon->face = copierTriangle3d(parcoursMaillon->face);
 
         if (isHead) {
@@ -220,6 +219,9 @@ void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {
             maillonTMP = maillonTMP->pt_suiv;
         }
         maillonTMP->pt_suiv = o2->tete;
+        //Tri de l'objet
+        mergeSortZ(&maillonTMP);
+        o->est_trie = true;
     }
 
     free(o2);

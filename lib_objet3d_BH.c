@@ -321,7 +321,7 @@ t_objet3d *copierObjet3d_BH(t_objet3d *o) {
         copyObject = camera(o->largeur, o->hauteur, o->proche, o->loin, o->distance_ecran);
     } else {
         //Trier avant la copie semble être une bonne idée
-        mergeSortZ(&o->tete);
+        if (!o->est_trie) mergeSortZ(&o->tete);
         copyObject = objet_vide();
         copyObject->tete = cloneMaillon(o->tete);
     }
@@ -426,7 +426,7 @@ void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *came
     t_maillon *maillonTMP = pt_objet->tete;
 
     //Trier liste
-    mergeSortZ(&maillonTMP);
+    if (!pt_objet->est_trie) mergeSortZ(&maillonTMP);
 
     t_maillon *first = NULL;
 

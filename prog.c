@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
 
         majEcran(surface);
         /* Framerate fixe a env 120 FPS max */
-        SDL_Delay(MAX(0, (1000. / 120.) - (SDL_GetTicks() - oldtime)));
+//        SDL_Delay(MAX(0, (1000. / 120.) - (SDL_GetTicks() - oldtime)));
         oldtime = SDL_GetTicks();
 
         cpt++;

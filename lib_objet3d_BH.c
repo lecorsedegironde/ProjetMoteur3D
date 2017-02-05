@@ -2,15 +2,6 @@
 #include "lib_objet3d.h"
 #include "lib_3d.h"
 
-#define PARA_A definirPoint3d(-lx/2, -ly/2, -lz/2)
-#define PARA_B definirPoint3d(lx/2, -ly/2, -lz/2)
-#define PARA_C definirPoint3d(lx/2, ly/2, -lz/2)
-#define PARA_D definirPoint3d(-lx/2, ly/2, -lz/2)
-#define PARA_E definirPoint3d(-lx/2, -ly/2, lz/2)
-#define PARA_F definirPoint3d(lx/2, -ly/2, lz/2)
-#define PARA_G definirPoint3d(lx/2, ly/2, lz/2)
-#define PARA_H definirPoint3d(-lx/2, ly/2, lz/2)
-
 /**
  * Crée un objet 3d vide
  * Cet objet n'est pas une camera
@@ -68,85 +59,98 @@ t_objet3d *camera_BH(double l, double h, double n, double f, double d) {
 t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
     t_objet3d *parallepipede = objet_vide();
     //Création des maillons (12 triangles)
+    //Création des points
+    t_point3d *a = definirPoint3d(-lx / 2, -ly / 2, -lz / 2);
+    t_point3d *b = definirPoint3d(lx / 2, -ly / 2, -lz / 2);
+    t_point3d *c = definirPoint3d(lx / 2, ly / 2, -lz / 2);
+    t_point3d *d = definirPoint3d(-lx / 2, ly / 2, -lz / 2);
+    t_point3d *e = definirPoint3d(-lx / 2, -ly / 2, lz / 2);
+    t_point3d *f = definirPoint3d(lx / 2, -ly / 2, lz / 2);
+    t_point3d *g = definirPoint3d(lx / 2, ly / 2, lz / 2);
+    t_point3d *h = definirPoint3d(-lx / 2, ly / 2, lz / 2);
+
     //Maillon pour la chaine
     t_maillon *maillonTMP = NULL;
 
-    for (int i = 0; i < 12; ++i) {
+    for (int i = 0; i < 13; ++i) {
         t_maillon *maillon = malloc(sizeof(t_maillon));
+        maillon->pt_suiv = NULL;
 
         switch (i) {
             case 0:
-                //ABC Arrière par rapport cam défaut
-                maillon->face = definirTriangle3d(PARA_A, PARA_B, PARA_C);
-                maillon->couleur = MARRON2;
+                //DBC Arrière par rapport cam défaut
+                maillon->face = definirTriangle3d(b, d, c);
+                maillon->couleur = ROUGEC;
                 break;
             case 1:
-                //ACD Arrière par rapport cam défaut TRIANGLE S'AFFICHE PAS !
-                maillon->face = definirTriangle3d(PARA_A, PARA_C, PARA_D);
-                maillon->couleur = MARRON1;
+                //ABD Arrière par rapport cam défaut TRIANGLE S'AFFICHE PAS !
+                maillon->face = definirTriangle3d(a, b, d);
+                maillon->couleur = ROUGEF;
                 break;
             case 2:
                 //DCG
-                maillon->face = definirTriangle3d(PARA_D, PARA_C, PARA_G);
+                maillon->face = definirTriangle3d(d, c, g);
                 maillon->couleur = VERTC;
                 break;
             case 3:
                 //DGH
-                maillon->face = definirTriangle3d(PARA_D, PARA_G, PARA_H);
+                maillon->face = definirTriangle3d(d, g, h);
                 maillon->couleur = VERTC;
                 break;
             case 4:
                 //HGF
-                maillon->face = definirTriangle3d(PARA_H, PARA_G, PARA_F);
+                maillon->face = definirTriangle3d(h, g, f);
                 maillon->couleur = BLEUC;
                 break;
             case 5:
                 //HFE
-                maillon->face = definirTriangle3d(PARA_H, PARA_F, PARA_E);
+                maillon->face = definirTriangle3d(h, f, e);
                 maillon->couleur = BLEUC;
                 break;
             case 6:
                 //EFB
-                maillon->face = definirTriangle3d(PARA_E, PARA_F, PARA_B);
+                maillon->face = definirTriangle3d(e, f, b);
                 maillon->couleur = JAUNEC;
                 break;
             case 7:
                 //AEB
-                maillon->face = definirTriangle3d(PARA_A, PARA_E, PARA_B);
+                maillon->face = definirTriangle3d(a, e, b);
                 maillon->couleur = JAUNEC;
                 break;
             case 8:
                 //HAE
-                maillon->face = definirTriangle3d(PARA_H, PARA_A, PARA_E);
+                maillon->face = definirTriangle3d(h, a, e);
                 maillon->couleur = PALEC;
                 break;
             case 9:
                 //HAD
-                maillon->face = definirTriangle3d(PARA_H, PARA_A, PARA_D);
+                maillon->face = definirTriangle3d(h, a, d);
                 maillon->couleur = PALEC;
                 break;
             case 10:
                 //FGC
-                maillon->face = definirTriangle3d(PARA_F, PARA_G, PARA_C);
+                maillon->face = definirTriangle3d(f, g, c);
                 maillon->couleur = ROSEC;
                 break;
             case 11:
                 //FCB
-                maillon->face = definirTriangle3d(PARA_F, PARA_C, PARA_B);
+                maillon->face = definirTriangle3d(f, c, b);
                 maillon->couleur = ROSEC;
                 break;
             default:
                 //WTF?
-                return NULL;
+                maillon->couleur = MARRON3;
+                maillon->face = definirTriangle3d(c, b, d);
+//                return NULL;
         }
 
-        !i ? (parallepipede->tete = maillon) : (maillonTMP->pt_suiv = maillon);
+        if (i == 0) {
+            parallepipede->tete = maillon;
+        } else {
+            maillonTMP->pt_suiv = maillon;
+        }
         maillonTMP = maillon;
     }
-
-    //TODO Ici ça ne marche pas
-//    mergeSortZ(&parallepipede->tete);
-//    parallepipede->est_trie = true;
 
     return parallepipede;
 }
@@ -155,9 +159,153 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {}
 
 t_objet3d *sphere_amiga_BH(double r, double nlat, double nlong) {}
 
-t_objet3d *arbre_BH(double lx, double ly, double lz) {}
+/**
+ *
+ * @param lx
+ * @param ly
+ * @param lz
+ * @return
+ */
+t_objet3d *arbre_BH(double lx, double ly, double lz) {
+    //Création objet 3d
+    t_objet3d *arbre = objet_vide();
 
-t_objet3d *damier_BH(double lx, double lz, double nx, double nz) {}
+    //Création du parralépipède
+    t_objet3d *base = parallelepipede(lx, ly, lz);
+
+    //Création des points
+    t_point3d *a = definirPoint3d(-lx / 2, ly / 2, -lz / 2);
+    t_point3d *b = definirPoint3d(lx / 2, ly / 2, -lz / 2);
+    t_point3d *c = definirPoint3d(lx / 2, ly / 2, lz / 2);
+    t_point3d *d = definirPoint3d(-lx / 2, ly / 2, lz / 2);
+    t_point3d *e = definirPoint3d(0, (ly / 2) + lz, 0);
+
+    //Changement de couleurs de la base
+    t_maillon *maillonTMP = base->tete;
+    //Itérateur pour la couleur
+    int i = 0;
+
+    while (maillonTMP != NULL) {
+        switch (i % 4) {
+            case 0:
+                maillonTMP->couleur = MARRON4;
+                break;
+            case 1:
+                maillonTMP->couleur = MARRON1;
+                break;
+            case 2:
+                maillonTMP->couleur = MARRON3;
+                break;
+            case 3:
+                maillonTMP->couleur = MARRON2;
+                break;
+
+            default:
+                break;
+        }
+
+        maillonTMP = maillonTMP->pt_suiv;
+        ++i;
+    }
+
+    //Création des feuilles
+    //Remise à null de tmp
+    maillonTMP = NULL;
+    for (int j = 0; j < 4; ++j) {
+        t_maillon *maillon = malloc(sizeof(t_maillon));
+        maillon->pt_suiv = NULL;
+
+        switch (j) {
+            case 0:
+                maillon->face = definirTriangle3d(a, b, e);
+                maillon->couleur = VERTC;
+                break;
+            case 1:
+                maillon->face = definirTriangle3d(b, c, e);
+                maillon->couleur = VERTF;
+                break;
+            case 2:
+                maillon->face = definirTriangle3d(c, d, e);
+                maillon->couleur = VERTC;
+                break;
+            case 3:
+                maillon->face = definirTriangle3d(d, a, e);
+                maillon->couleur = VERTF;
+                break;
+            default:
+                //Well shit.
+                break;
+        }
+
+        if (j == 0) {
+            arbre->tete = maillon;
+        } else {
+            maillonTMP->pt_suiv = maillon;
+        }
+        maillonTMP = maillon;
+    }
+
+    composerObjet3d(arbre, base);
+
+    return arbre;
+}
+
+t_objet3d *damier_BH(double lx, double lz, double nx, double nz) {
+    //Création objet 3d
+    t_objet3d *damier = objet_vide();
+
+    //Création du 1er maillon
+    t_maillon *maillonTMP = NULL;
+
+    //Double boucle for imbriquée pour créer le damier
+    t_bool isHead = true;
+
+    for (int i = 0; i < nz; ++i) {
+        for (int j = 0; j < nz; ++j) {
+            //Création des maillons
+            t_maillon *maillon1 = malloc(sizeof(t_maillon));
+            t_maillon *maillon2 = malloc(sizeof(t_maillon));
+
+            //Définir les deux points x et z
+            double x = (i * lx) / (int) nx - lx / 2;
+            double x_1 = ((i + 1) * lx) / (int) nx - lx / 2;
+            double z = (j * lz) / (int) nz - lz / 2;
+            double z_1 = ((j + 1) * lz) / (int) nz - lz / 2;
+
+            //Création des points
+            t_point3d *a = definirPoint3d(x, 0, z);
+            t_point3d *b = definirPoint3d(x_1, 0, z);
+            t_point3d *c = definirPoint3d(x_1, 0, z_1);
+            t_point3d *d = definirPoint3d(x, 0, z_1);
+
+            //Define color
+            Uint32 col = 0;
+            if ((i % 2) == 0) {
+                (j % 2) ? (col = BLANC) : (col = NOIR);
+            } else {
+                (j % 2) ? (col = NOIR) : (col = BLANC);
+            }
+
+            maillon1->couleur = col;
+            maillon2->couleur = col;
+
+            maillon1->face = definirTriangle3d(a, b, c);
+
+            maillon2->face = definirTriangle3d(a, d, c);
+
+            maillon1->pt_suiv = maillon2;
+
+            if (isHead) {
+                damier->tete = maillon1;
+                isHead = false;
+            } else {
+                maillonTMP->pt_suiv = maillon1;
+            }
+            maillonTMP = maillon2;
+        }
+    }
+    return damier;
+}
 
 // attention, effectue une copie mirroir
 /**
@@ -167,21 +315,25 @@ t_objet3d *damier_BH(double lx, double lz, double nx, double nz) {}
  */
 t_objet3d *copierObjet3d_BH(t_objet3d *o) {
     t_objet3d *copyObject;
-    t_maillon *parcoursMaillon = NULL;
-    t_maillon *maillonTMP = NULL;
-    t_bool isHead = true;
 
     //Copie des propriétés
     if (o->est_camera == true) {
         copyObject = camera(o->largeur, o->hauteur, o->proche, o->loin, o->distance_ecran);
     } else {
+        //Trier avant la copie semble être une bonne idée
+        mergeSortZ(&o->tete);
         copyObject = objet_vide();
         copyObject->tete = cloneMaillon(o->tete);
-        mergeSortZ(&copyObject->tete);
     }
     return copyObject;
 }
 
+/**
+ * Clone les maillons d'une liste chaînée de manière récursive
+ *
+ * @param list liste à trier
+ * @return une liste triée
+ */
 t_maillon *cloneMaillon(t_maillon *list) {
     if (list == NULL) {
         return NULL;
@@ -278,7 +430,7 @@ void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *came
 
     t_maillon *first = NULL;
 
-//    Invert list
+    //Invert list
     while (maillonTMP != NULL) {
         t_maillon *nextMaillon = maillonTMP->pt_suiv;
         maillonTMP->pt_suiv = first;
@@ -292,9 +444,6 @@ void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *came
     while (maillonTMP != NULL) {
         remplirTriangle3d(surface, maillonTMP->face, maillonTMP->couleur, camera->largeur, camera->hauteur,
                           camera->distance_ecran);
-        if (maillonTMP->couleur == MARRON1 || maillonTMP->couleur == MARRON2) {
-            printf("Haha lol je suis affiché %s\n", COULEUR(maillonTMP->couleur));
-        }
         maillonTMP = maillonTMP->pt_suiv;
     }
 }

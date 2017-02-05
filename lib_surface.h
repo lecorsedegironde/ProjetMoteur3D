@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <SDL/SDL.h>
 
-#define RX 800
-#define RY 600
+#define RX 1024
+#define RY 768
 
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define MAX(a,b) ((a)>(b)?(a):(b))

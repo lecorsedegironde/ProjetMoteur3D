@@ -160,11 +160,11 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {}
 t_objet3d *sphere_amiga_BH(double r, double nlat, double nlong) {}
 
 /**
- *
- * @param lx
- * @param ly
- * @param lz
- * @return
+ * Créé un arbre à partir des paramètres lx, ly et lz
+ * @param lx longeur
+ * @param ly hauteur
+ * @param lz profondeur
+ * @return un pointeur sur objet3d de l'arbre
  */
 t_objet3d *arbre_BH(double lx, double ly, double lz) {
     //Création objet 3d
@@ -250,6 +250,14 @@ t_objet3d *arbre_BH(double lx, double ly, double lz) {
     return arbre;
 }
 
+/**
+ * Retourne un damier NOIR et BLANC en fonction des paramètres passés
+ * @param lx
+ * @param lz
+ * @param nx
+ * @param nz
+ * @return
+ */
 t_objet3d *damier_BH(double lx, double lz, double nx, double nz) {
     //Création objet 3d
     t_objet3d *damier = objet_vide();
@@ -307,7 +315,6 @@ t_objet3d *damier_BH(double lx, double lz, double nx, double nz) {
     return damier;
 }
 
-// attention, effectue une copie mirroir
 /**
  * Effectuer une copie d'un objet 3d en dupliquant tous ses maillons
  * @param o l'objet à copier
@@ -321,9 +328,13 @@ t_objet3d *copierObjet3d_BH(t_objet3d *o) {
         copyObject = camera(o->largeur, o->hauteur, o->proche, o->loin, o->distance_ecran);
     } else {
         //Trier avant la copie semble être une bonne idée
-        if (!o->est_trie) mergeSortZ(&o->tete);
+        if (!o->est_trie) {
+            mergeSortZ(&o->tete);
+            o->est_trie = true;
+        }
         copyObject = objet_vide();
         copyObject->tete = cloneMaillon(o->tete);
+        copyObject->est_trie = true;
     }
     return copyObject;
 }
@@ -354,21 +365,60 @@ t_maillon *cloneMaillon(t_maillon *list) {
 void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {
     //On va quand même tester, voir si c'est pas des cameras
     if (!o->est_camera && !o2->est_camera) {
-        t_maillon *maillonTMP = o->tete;
 
-        while (maillonTMP->pt_suiv != NULL) {
-            maillonTMP = maillonTMP->pt_suiv;
-        }
-        maillonTMP->pt_suiv = o2->tete;
+        if (o->tete != NULL) {
+            t_maillon *maillonTMP = o->tete;
+
+            while (maillonTMP->pt_suiv != NULL) {
+                maillonTMP = maillonTMP->pt_suiv;
+            }
+            maillonTMP->pt_suiv = o2->tete;
+
+        } else o->tete = o2->tete;
     }
-
     free(o2);
 }
 
-
+/**
+ * Prend 2 objets 3d pour n'en faire qu'un seul et les enlève les faces qui n'apparaissent pas
+ * @param o
+ * @param o2
+ * @param camera
+ */
 void composerObjet3d_limite_en_z_BH(t_objet3d *o, t_objet3d *o2, t_objet3d *camera) {
-    //Trier les triangles, du plus loin au plus proche ?
+    //Composer les objets avec uniquement les faces qui apparaissent dans la camera
+    //On va quand même tester, voir si c'est pas des cameras
+    //Chuis pas censé être con mais on sait jamais
+    if (!o->est_camera && !o2->est_camera) {
+        t_maillon *maillonTMP = o->tete;
+        t_maillon *oldMaillon = o->tete;
+        t_bool o1Over = false;
 
+        if (maillonTMP == NULL) {
+            maillonTMP = o2->tete;
+            oldMaillon = o2->tete;
+            o->tete = maillonTMP;
+            o1Over = true;
+        }
+        while (maillonTMP->pt_suiv != NULL) {
+            double zMoyen = zmoyen(maillonTMP->face);
+            //Si le zmoyen ne rentre pas on vire la face
+            if (zMoyen < camera->loin || zMoyen > camera->proche) {
+                oldMaillon->pt_suiv = maillonTMP->pt_suiv;
+            } else {
+                oldMaillon = maillonTMP;
+            }
+
+            maillonTMP = maillonTMP->pt_suiv;
+
+            if (maillonTMP->pt_suiv == NULL && !o1Over && o2->tete != NULL) {
+                maillonTMP->pt_suiv = o2->tete;
+                o1Over = true;
+            }
+        }
+    }
+    o->est_trie = false;
+    free(o2);
 }
 
 /**

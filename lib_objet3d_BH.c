@@ -72,7 +72,7 @@ t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
     //Maillon pour la chaine
     t_maillon *maillonTMP = NULL;
 
-    for (int i = 0; i < 13; ++i) {
+    for (int i = 0; i < 12; ++i) {
         t_maillon *maillon = malloc(sizeof(t_maillon));
         maillon->pt_suiv = NULL;
 
@@ -139,9 +139,7 @@ t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
                 break;
             default:
                 //WTF?
-                maillon->couleur = MARRON3;
-                maillon->face = definirTriangle3d(c, b, d);
-//                return NULL;
+                return NULL;
         }
 
         if (i == 0) {
@@ -155,7 +153,81 @@ t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
     return parallepipede;
 }
 
-t_objet3d *sphere_BH(double r, double nlat, double nlong) {}
+/**
+ * Créé une sphere à partir des paramètres passés à la fonction
+ * @param r le rayon de la sphere
+ * @param nlat le nombre de latitudes
+ * @param nlong le nombre de longitudes
+ * @return un pointeur sur objet 3d sphere
+ */
+t_objet3d *sphere_BH(double r, double nlat, double nlong) {
+    //Création objet3d
+    t_objet3d *sphere = objet_vide();
+
+    //Maillon pour la création
+    t_maillon *maillonTMP = NULL;
+    t_bool isHead = true;
+
+    //Tableau de stockage des points
+    double pointsPos[(int) nlat][(int) nlong][3];
+
+    //Double boucle for imbriquée pour définir les points
+    for (int i = 0; i < nlat; ++i) {
+        double theta = (i * M_PI) / nlat;
+        double sinTheta = sin(theta);
+        double cosTheta = cos(theta);
+
+        for (int j = 0; j < nlong; ++j) {
+            double phi = (j * 2 * M_PI) / nlong;
+            double sinPhi = sin(phi);
+            double cosPhi = cos(phi);
+
+            double x = cosPhi * sinTheta * r;
+            double y = cosTheta * r;
+            double z = sinPhi * sinTheta * r;
+
+            pointsPos[i][j][0] = x;
+            pointsPos[i][j][0] = y;
+            pointsPos[i][j][0] = z;
+        }
+    }
+
+    //Maintenant que l'on a défini les points, on peut créer les triangles
+    for (int k = 0; k < nlat; ++k) {
+        for (int i = 0; i < nlong; ++i) {
+            //On défini deux triangles -> un caré
+
+            //Création des maillons
+            t_maillon *maillon1 = malloc(sizeof(t_maillon));
+            t_maillon *maillon2 = malloc(sizeof(t_maillon));
+
+            maillon1->couleur = ROUGEC;
+            maillon2->couleur = BLEUF;
+
+            t_point3d *p1 = definirPoint3d(pointsPos[k+1][i][0],pointsPos[k+1][i][1],pointsPos[k+1][i][2]);
+            t_point3d *p2 = definirPoint3d(pointsPos[k][i][0],pointsPos[k][i][1],pointsPos[k][i][2]);
+            t_point3d *p3 = definirPoint3d(pointsPos[k][i+1][0],pointsPos[k][i+1][1],pointsPos[k][i+1][2]);
+            t_point3d *p4 = definirPoint3d(pointsPos[k+1][i+1][0],pointsPos[k+1][i+1][1],pointsPos[k+1][i+1][2]);
+
+
+            maillon1->face = definirTriangle3d(p1, p4, p3);
+
+            maillon2->face = definirTriangle3d(p1, p2, p3);
+
+            maillon1->pt_suiv = maillon2;
+
+            if (isHead) {
+                sphere->tete = maillon1;
+                isHead = false;
+            } else {
+                maillonTMP->pt_suiv = maillon1;
+            }
+            maillonTMP = maillon2;
+        }
+    }
+
+    return sphere;
+}
 
 t_objet3d *sphere_amiga_BH(double r, double nlat, double nlong) {}
 

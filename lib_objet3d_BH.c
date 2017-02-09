@@ -204,10 +204,11 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {
             maillon1->couleur = ROUGEC;
             maillon2->couleur = BLEUF;
 
-            t_point3d *p1 = definirPoint3d(pointsPos[k+1][i][0],pointsPos[k+1][i][1],pointsPos[k+1][i][2]);
-            t_point3d *p2 = definirPoint3d(pointsPos[k][i][0],pointsPos[k][i][1],pointsPos[k][i][2]);
-            t_point3d *p3 = definirPoint3d(pointsPos[k][i+1][0],pointsPos[k][i+1][1],pointsPos[k][i+1][2]);
-            t_point3d *p4 = definirPoint3d(pointsPos[k+1][i+1][0],pointsPos[k+1][i+1][1],pointsPos[k+1][i+1][2]);
+            t_point3d *p1 = definirPoint3d(pointsPos[k + 1][i][0], pointsPos[k + 1][i][1], pointsPos[k + 1][i][2]);
+            t_point3d *p2 = definirPoint3d(pointsPos[k][i][0], pointsPos[k][i][1], pointsPos[k][i][2]);
+            t_point3d *p3 = definirPoint3d(pointsPos[k][i + 1][0], pointsPos[k][i + 1][1], pointsPos[k][i + 1][2]);
+            t_point3d *p4 = definirPoint3d(pointsPos[k + 1][i + 1][0], pointsPos[k + 1][i + 1][1],
+                                           pointsPos[k + 1][i + 1][2]);
 
 
             maillon1->face = definirTriangle3d(p1, p4, p3);
@@ -465,6 +466,7 @@ void composerObjet3d_limite_en_z_BH(t_objet3d *o, t_objet3d *o2, t_objet3d *came
         t_maillon *maillonTMP = o->tete;
         t_maillon *oldMaillon = o->tete;
         t_bool o1Over = false;
+        t_bool isHead = true;
 
         if (maillonTMP == NULL) {
             maillonTMP = o2->tete;
@@ -476,11 +478,15 @@ void composerObjet3d_limite_en_z_BH(t_objet3d *o, t_objet3d *o2, t_objet3d *came
             double zMoyen = zmoyen(maillonTMP->face);
             //Si le zmoyen ne rentre pas on vire la face
             if (zMoyen < camera->loin || zMoyen > camera->proche) {
-                oldMaillon->pt_suiv = maillonTMP->pt_suiv;
+                //On retire le maillon
+                if (!isHead) oldMaillon->pt_suiv = maillonTMP->pt_suiv;
+                else o->tete = maillonTMP->pt_suiv;
             } else {
+                if (isHead) isHead = false;
                 oldMaillon = maillonTMP;
             }
 
+            //On passe au maillon suivant
             maillonTMP = maillonTMP->pt_suiv;
 
             if (maillonTMP->pt_suiv == NULL && !o1Over && o2->tete != NULL) {

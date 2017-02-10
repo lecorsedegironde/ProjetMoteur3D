@@ -153,14 +153,29 @@ t_objet3d *parallelepipede_BH(double lx, double ly, double lz) {
 }
 
 /**
+ * Créé une sphere 3d
+ */
+t_objet3d *sphere_BH(double r, double nlat, double nlong) {
+    return sphereCreation(r, nlat, nlong, true);
+}
+
+/**
+ * Créé une sphere 3d avec des couleurs particulières
+ */
+t_objet3d *sphere_amiga_BH(double r, double nlat, double nlong) {
+    return sphereCreation(r, nlat, nlong, false);
+}
+
+/**
  * Créé une sphere à partir des paramètres passés à la fonction
+ *
  * @param r le rayon de la sphere
  * @param nlat le nombre de latitudes
  * @param nlong le nombre de longitudes
+ * @param colorGeneration is color gen nedded ?
  * @return un pointeur sur objet 3d sphere
  */
-t_objet3d *sphere_BH(double r, double nlat, double nlong) {
-    //Création objet3d
+t_objet3d *sphereCreation(double r, double nlat, double nlong, t_bool colorGeneration) {
     t_objet3d *sphere = objet_vide();
 
     //Maillon pour la création
@@ -168,10 +183,10 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {
     t_bool isHead = true;
 
     //Couleurs
-    Uint32 couleurMaillon1 = VERTC;
-    Uint32 couleurMaillon2 = BLEUC;
-    Uint32 couleurMaillon3 = ROSEC;
-    Uint32 couleurMaillon4 = JAUNEC;
+    Uint32 couleur1 = VERTC;
+    Uint32 couleur2 = BLEUC;
+    Uint32 couleur3 = ROSEC;
+    Uint32 couleur4 = JAUNEC;
 
 
     //Tableau de stockage des points
@@ -208,9 +223,13 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {
             t_maillon *maillon1 = malloc(sizeof(t_maillon));
             t_maillon *maillon2 = malloc(sizeof(t_maillon));
 
-            maillon1->couleur = couleurMaillon1;
-            maillon2->couleur = couleurMaillon2;
-
+            if (colorGeneration) {
+                maillon1->couleur = ((i + j) % 2) ? couleur1 : couleur3;
+                maillon2->couleur = ((i + j) % 2) ? couleur2 : couleur4;
+            } else {
+                maillon1->couleur = ((i + j) % 2) ? BLANC : ROUGEC;
+                maillon2->couleur = ((i + j) % 2) ? BLANC : ROUGEC;
+            }
 
             //On défini deux triangles -> un caré
             maillon1->face = definirTriangle3d(pointsPos[i][j], pointsPos[i][j + 1], pointsPos[i + 1][j + 1]);
@@ -230,9 +249,14 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {
                 //Création des maillons
                 t_maillon *maillon3 = malloc(sizeof(t_maillon));
                 t_maillon *maillon4 = malloc(sizeof(t_maillon));
-                maillon3->couleur = couleurMaillon3;
-                maillon4->couleur = couleurMaillon4;
 
+                if (colorGeneration) {
+                    maillon3->couleur = (j % 2) ? couleur3 : couleur2;
+                    maillon4->couleur = (j % 2) ? couleur4 : couleur1;
+                } else {
+                    maillon3->couleur = (j % 2) ? ROUGEC : BLANC;
+                    maillon4->couleur = (j % 2) ? BLANC : ROUGEC;
+                }
 
                 //On défini deux triangles -> un caré
                 maillon3->face = definirTriangle3d(p0, pointsPos[0][j], pointsPos[0][j + 1]);
@@ -249,9 +273,14 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {
         //Création des maillons
         t_maillon *maillon1 = malloc(sizeof(t_maillon));
         t_maillon *maillon2 = malloc(sizeof(t_maillon));
-        maillon1->couleur = couleurMaillon1;
-        maillon2->couleur = couleurMaillon2;
 
+        if (colorGeneration) {
+            maillon1->couleur = (i % 2) ? couleur1 : couleur3;
+            maillon2->couleur = (i % 2) ? couleur2 : couleur4;
+        } else {
+            maillon1->couleur = (i % 2) ? ROUGEC : BLANC;
+            maillon2->couleur = (i % 2) ? ROUGEC : BLANC;
+        }
 
         //On défini deux triangles -> un caré
         maillon1->face = definirTriangle3d(pointsPos[i][(int) (nlong - 1)], pointsPos[i][0], pointsPos[i + 1][0]);
@@ -268,14 +297,20 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {
             //Les deux derniers triangles
             t_maillon *maillon3 = malloc(sizeof(t_maillon));
             t_maillon *maillon4 = malloc(sizeof(t_maillon));
-            maillon3->couleur = couleurMaillon3;
-            maillon4->couleur = couleurMaillon4;
 
+            if (colorGeneration) {
+                maillon4->couleur = (i % 2) ? couleur2 : couleur3;
+                maillon3->couleur = (i % 2) ? couleur1 : couleur4;
+            } else {
+                maillon3->couleur = ROUGEC;
+                maillon4->couleur = BLANC;
+            }
 
             //On défini deux triangles -> un caré
-            maillon3->face = definirTriangle3d(p0,pointsPos[i][(int)nlong-1],pointsPos[i][0]);
+            maillon3->face = definirTriangle3d(p0, pointsPos[i][(int) nlong - 1], pointsPos[i][0]);
 
-            maillon4->face = definirTriangle3d(pointsPos[(int)nlat-1][(int)nlong-1],pointsPos[(int)nlat-1][0],p1);
+            maillon4->face = definirTriangle3d(pointsPos[(int) nlat - 1][(int) nlong - 1], pointsPos[(int) nlat - 1][0],
+                                               p1);
 
             //On ajoute les trianlges à la suite
             maillonTMP->pt_suiv = maillon3;
@@ -286,8 +321,6 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {
 
     return sphere;
 }
-
-t_objet3d *sphere_amiga_BH(double r, double nlat, double nlong) {}
 
 /**
  * Créé un arbre à partir des paramètres lx, ly et lz

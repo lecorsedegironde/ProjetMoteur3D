@@ -41,7 +41,7 @@ t_objet3d *(*parallelepipede)(double lx, double ly, double lz) = parallelepipede
 
 t_objet3d *(*sphere)(double r, double nlat, double nlong) = sphere_BH;
 
-t_objet3d *(*sphere_amiga)(double r, double nlat, double nlong) = sphere_amiga_PA;
+t_objet3d *(*sphere_amiga)(double r, double nlat, double nlong) = sphere_amiga_BH;
 
 t_objet3d *(*arbre)(double lx, double ly, double lz) = arbre_BH;
 

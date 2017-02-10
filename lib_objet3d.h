@@ -112,6 +112,8 @@ t_maillon *sortedMergeZ(t_maillon *a, t_maillon *b);
 
 t_maillon *cloneMaillon(t_maillon* liste);
 
+t_objet3d *sphereCreation(double r, double nlat, double nlong, t_bool colorGeneration);
+
 /*
  * Zone a adapter...
  */

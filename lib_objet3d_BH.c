@@ -1,6 +1,5 @@
 #include <math.h>
 #include "lib_objet3d.h"
-#include "lib_3d.h"
 
 /**
  * Crée un objet 3d vide
@@ -168,12 +167,19 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {
     t_maillon *maillonTMP = NULL;
     t_bool isHead = true;
 
+    //Couleurs
+    Uint32 couleurMaillon1 = VERTC;
+    Uint32 couleurMaillon2 = BLEUC;
+    Uint32 couleurMaillon3 = ROSEC;
+    Uint32 couleurMaillon4 = JAUNEC;
+
+
     //Tableau de stockage des points
-    double pointsPos[(int) nlat][(int) nlong][3];
+    t_point3d *pointsPos[(int) nlat][(int) nlong];
 
     //Double boucle for imbriquée pour définir les points
-    for (int i = 0; i < nlat; ++i) {
-        double theta = (i * M_PI) / nlat;
+    for (int i = 1; i < nlat + 1; ++i) {
+        double theta = (i * M_PI) / (nlat + 1);
         double sinTheta = sin(theta);
         double cosTheta = cos(theta);
 
@@ -182,38 +188,34 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {
             double sinPhi = sin(phi);
             double cosPhi = cos(phi);
 
-            double x = cosPhi * sinTheta * r;
-            double y = cosTheta * r;
-            double z = sinPhi * sinTheta * r;
+            double x = r * sinTheta * sinPhi;
+            double y = -r * cosTheta;
+            double z = r * sinTheta * cosPhi;
 
-            pointsPos[i][j][0] = x;
-            pointsPos[i][j][0] = y;
-            pointsPos[i][j][0] = z;
+            pointsPos[i - 1][j] = definirPoint3d(x, y, z);
         }
     }
 
+    //On définit les points d'origine
+    t_point3d *p0 = definirPoint3d(0, -r, 0);
+    t_point3d *p1 = definirPoint3d(0, r, 0);
+
     //Maintenant que l'on a défini les points, on peut créer les triangles
-    for (int k = 0; k < nlat; ++k) {
-        for (int i = 0; i < nlong; ++i) {
-            //On défini deux triangles -> un caré
+    for (int i = 0; i < nlat - 1; ++i) {
+        for (int j = 0; j < nlong - 1; ++j) {
 
             //Création des maillons
             t_maillon *maillon1 = malloc(sizeof(t_maillon));
             t_maillon *maillon2 = malloc(sizeof(t_maillon));
 
-            maillon1->couleur = ROUGEC;
-            maillon2->couleur = BLEUF;
-
-            t_point3d *p1 = definirPoint3d(pointsPos[k + 1][i][0], pointsPos[k + 1][i][1], pointsPos[k + 1][i][2]);
-            t_point3d *p2 = definirPoint3d(pointsPos[k][i][0], pointsPos[k][i][1], pointsPos[k][i][2]);
-            t_point3d *p3 = definirPoint3d(pointsPos[k][i + 1][0], pointsPos[k][i + 1][1], pointsPos[k][i + 1][2]);
-            t_point3d *p4 = definirPoint3d(pointsPos[k + 1][i + 1][0], pointsPos[k + 1][i + 1][1],
-                                           pointsPos[k + 1][i + 1][2]);
+            maillon1->couleur = couleurMaillon1;
+            maillon2->couleur = couleurMaillon2;
 
 
-            maillon1->face = definirTriangle3d(p1, p4, p3);
+            //On défini deux triangles -> un caré
+            maillon1->face = definirTriangle3d(pointsPos[i][j], pointsPos[i][j + 1], pointsPos[i + 1][j + 1]);
 
-            maillon2->face = definirTriangle3d(p1, p2, p3);
+            maillon2->face = definirTriangle3d(pointsPos[i][j], pointsPos[i + 1][j], pointsPos[i + 1][j + 1]);
 
             maillon1->pt_suiv = maillon2;
 
@@ -224,6 +226,61 @@ t_objet3d *sphere_BH(double r, double nlat, double nlong) {
                 maillonTMP->pt_suiv = maillon1;
             }
             maillonTMP = maillon2;
+            if (i == 0) {
+                //Création des maillons
+                t_maillon *maillon3 = malloc(sizeof(t_maillon));
+                t_maillon *maillon4 = malloc(sizeof(t_maillon));
+                maillon3->couleur = couleurMaillon3;
+                maillon4->couleur = couleurMaillon4;
+
+
+                //On défini deux triangles -> un caré
+                maillon3->face = definirTriangle3d(p0, pointsPos[0][j], pointsPos[0][j + 1]);
+
+                maillon4->face = definirTriangle3d(pointsPos[(int) nlat - 1][j], pointsPos[(int) nlat - 1][j + 1], p1);
+
+                //On ajoute les trianlges à la suite
+                maillonTMP->pt_suiv = maillon3;
+                maillon3->pt_suiv = maillon4;
+                maillonTMP = maillon4;
+            }
+        }
+
+        //Création des maillons
+        t_maillon *maillon1 = malloc(sizeof(t_maillon));
+        t_maillon *maillon2 = malloc(sizeof(t_maillon));
+        maillon1->couleur = couleurMaillon1;
+        maillon2->couleur = couleurMaillon2;
+
+
+        //On défini deux triangles -> un caré
+        maillon1->face = definirTriangle3d(pointsPos[i][(int) (nlong - 1)], pointsPos[i][0], pointsPos[i + 1][0]);
+
+        maillon2->face = definirTriangle3d(pointsPos[i][(int) (nlong - 1)], pointsPos[i + 1][(int) (nlong - 1)],
+                                           pointsPos[i + 1][0]);
+
+        //On ajoute les trianlges à la suite
+        maillonTMP->pt_suiv = maillon1;
+        maillon1->pt_suiv = maillon2;
+        maillonTMP = maillon2;
+
+        if (i == 0) {
+            //Les deux derniers triangles
+            t_maillon *maillon3 = malloc(sizeof(t_maillon));
+            t_maillon *maillon4 = malloc(sizeof(t_maillon));
+            maillon3->couleur = couleurMaillon3;
+            maillon4->couleur = couleurMaillon4;
+
+
+            //On défini deux triangles -> un caré
+            maillon3->face = definirTriangle3d(p0,pointsPos[i][(int)nlong-1],pointsPos[i][0]);
+
+            maillon4->face = definirTriangle3d(pointsPos[(int)nlat-1][(int)nlong-1],pointsPos[(int)nlat-1][0],p1);
+
+            //On ajoute les trianlges à la suite
+            maillonTMP->pt_suiv = maillon3;
+            maillon3->pt_suiv = maillon4;
+            maillonTMP = maillon4;
         }
     }
 
@@ -325,11 +382,11 @@ t_objet3d *arbre_BH(double lx, double ly, double lz) {
 
 /**
  * Retourne un damier NOIR et BLANC en fonction des paramètres passés
- * @param lx
- * @param lz
- * @param nx
- * @param nz
- * @return
+ * @param lx longueur
+ * @param lz largeur
+ * @param nx nb de carrés en longueur
+ * @param nz nb de carrés en largeur
+ * @return un pointeur sur objet3d
  */
 t_objet3d *damier_BH(double lx, double lz, double nx, double nz) {
     //Création objet 3d

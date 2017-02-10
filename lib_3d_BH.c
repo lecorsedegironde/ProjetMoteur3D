@@ -63,12 +63,10 @@ t_triangle3d *definirTriangle3d_BH(t_point3d *a, t_point3d *b, t_point3d *c) {
  * @return le pointeur sur le triangle copié
  */
 t_triangle3d *copierTriangle3d_BH(t_triangle3d *t) {
-    t_triangle3d *copyTriangle = malloc(sizeof(t_triangle3d));
-    for (int i = 0; i < 3; ++i) {
-        t_point3d *copyPoint = definirPoint3d(t->abc[i]->xyzt[0], t->abc[i]->xyzt[1], t->abc[i]->xyzt[2]);
-        copyTriangle->abc[i] = copyPoint;
-    }
-
+    t_triangle3d *copyTriangle = definirTriangle3d(
+            definirPoint3d(t->abc[0]->xyzt[0], t->abc[0]->xyzt[1], t->abc[0]->xyzt[2]),
+            definirPoint3d(t->abc[1]->xyzt[0], t->abc[1]->xyzt[1], t->abc[1]->xyzt[2]),
+            definirPoint3d(t->abc[2]->xyzt[0], t->abc[2]->xyzt[1], t->abc[2]->xyzt[2]));
     return copyTriangle;
 }
 
@@ -176,10 +174,7 @@ void remplirTriangle3d_BH(t_surface *surface, t_triangle3d *triangle, Uint32 c, 
     remplirTriangle2d(surface, triangle2d, c);
 
     //Free pointers
-    free(copy->abc[0]);
-    free(copy->abc[1]);
-    free(copy->abc[2]);
-    free(copy);
+    freeTriangle(copy);
     free(p1);
     free(p2);
     free(p3);
@@ -200,14 +195,7 @@ void translationTriangle3d_BH(t_triangle3d *t, t_point3d *vecteur) {
                                    {0, 0, 1, vecteur->xyzt[2]},
                                    {0, 0, 0, 1}};
     //Pour chaque point, on le multiplie avec la matrice
-    t_triangle3d *copy = copierTriangle3d(t);
-    for (int i = 0; i < 3; ++i) {
-        multiplication_vecteur(t->abc[i], matTranslation, copy->abc[i]);
-    }
-    free(copy->abc[0]);
-    free(copy->abc[1]);
-    free(copy->abc[2]);
-    free(copy);
+    transformationTriangle3d(t, matTranslation);
 }
 
 /**
@@ -223,23 +211,14 @@ void translationTriangle3d_BH(t_triangle3d *t, t_point3d *vecteur) {
  */
 void rotationTriangle3d_BH(t_triangle3d *t, t_point3d *centre, float degreX, float degreY, float degreZ) {
     //Transformation des angles d'euler en matrice de rotation
-    double a = cos(degreX), b = sin(degreX),
-            c = cos(degreY), d = sin(degreY),
-            e = cos(degreZ), f = sin(degreZ);
+    double a = cos(degreX), b = sin(degreX), c = cos(degreY), d = sin(degreY), e = cos(degreZ), f = sin(degreZ);
     double matRotation[4][4] = {{c * e,                (-c) * f,             d,        0},
                                 {b * d * e + a * f,    -(b * d * f) + a * e, -(b * c), 0},
                                 {-(a * d * e) + b * f, a * d * f + b * e,    a * c,    0},
                                 {0,                    0,                    0,        1}};
     //Translation des points vers l'origine, application de la matrice et tranlation inverse
-    translationTriangle3d(t, definirVecteur3d(0, 0, 0));
-    t_triangle3d *copy = copierTriangle3d(t);
-    for (int i = 0; i < 3; ++i) {
-        multiplication_vecteur(t->abc[i], matRotation, copy->abc[i]);
-    }
-    free(copy->abc[0]);
-    free(copy->abc[1]);
-    free(copy->abc[2]);
-    free(copy);
+    translationTriangle3d(t, ORIGIN);
+    transformationTriangle3d(t, matRotation);
     translationTriangle3d(t, centre);
 }
 
@@ -254,8 +233,17 @@ void transformationTriangle3d_BH(t_triangle3d *t, double mat[4][4]) {
     for (int i = 0; i < 3; ++i) {
         multiplication_vecteur(t->abc[i], mat, copy->abc[i]);
     }
-    free(copy->abc[0]);
-    free(copy->abc[1]);
-    free(copy->abc[2]);
-    free(copy);
+    freeTriangle(copy);
+}
+
+/**
+ * Free le triangle passé en paramètre
+ *
+ * @param t le trianlge à free
+ */
+void freeTriangle(t_triangle3d *t) {
+    free(t->abc[0]);
+    free(t->abc[1]);
+    free(t->abc[2]);
+    free(t);
 }

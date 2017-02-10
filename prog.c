@@ -14,6 +14,7 @@ SDL_Event event;
 int x = 0, y = 0;
 t_scene3d *scene, *cams[N_CAMERA];
 t_bool is_button_down = false;
+t_bool is_pause = false;
 
 t_objet3d *cam;
 int idx_cam = 1;
@@ -72,6 +73,8 @@ void handle_events() {
             free(deplacement);
         } else if (currentKeyStates[SDLK_ESCAPE]) {
             event.type = SDL_QUIT;
+        } else if (currentKeyStates[SDLK_SPACE]) {
+            is_pause ? (is_pause = false) : (is_pause = true);
         }
 
     }
@@ -122,28 +125,29 @@ int main(int argc, char **argv) {
     timestart = SDL_GetTicks();
     oldtime = timestart;
 
-    while (++i < DUREE * 60 && event.type != SDL_QUIT) // DUREE " * 60FPS
+    while (/*++i < DUREE * 60 && */event.type != SDL_QUIT) // DUREE " * 60FPS
     {
+        ++i;
         effacerFenetre(surface, 0);
 
         if (SDL_PollEvent(&event)) {
             handle_events();
         }
+        if (!is_pause) {
+            rotationScene3d(scn_r1, origine, 0, 0, sens * 5);
+            rotationScene3d(scn_r2, origine, 0, 0, sens * 5);
+            rotationScene3d(scn_r3, origine, 0, 0, sens * 5);
+            rotationScene3d(scn_r4, origine, 0, 0, sens * 5);
 
-        rotationScene3d(scn_r1, origine, 0, 0, sens * 5);
-        rotationScene3d(scn_r2, origine, 0, 0, sens * 5);
-        rotationScene3d(scn_r3, origine, 0, 0, sens * 5);
-        rotationScene3d(scn_r4, origine, 0, 0, sens * 5);
-
-        if (i % (3 * 60) == 0) sens = -sens;
-        if (sens > 0) translationScene3d(scn_voiture, vi);
-        else translationScene3d(scn_voiture, v);
-
+            if (i % (3 * 60) == 0) sens = -sens;
+            if (sens > 0) translationScene3d(scn_voiture, vi);
+            else translationScene3d(scn_voiture, v);
+        }
         dessinerScene3d(surface, scene);
 
         majEcran(surface);
-        /* Framerate fixe a env 60 FPS max */
-        //SDL_Delay(MAX(0,(1000./60.)-(SDL_GetTicks()-oldtime)));
+        /* Framerate fixe a env 120 FPS max */
+//        SDL_Delay(MAX(0, (1000. / 120.) - (SDL_GetTicks() - oldtime)));
         oldtime = SDL_GetTicks();
 
         cpt++;

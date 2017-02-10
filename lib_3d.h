@@ -7,6 +7,8 @@
 #define FX 1
 #define FY 0.2
 
+#define ORIGIN definirPoint3d(0,0,0)
+
 typedef struct {
     double xyzt[4];
 } t_point3d;
@@ -69,7 +71,7 @@ void rotationTriangle3d_BH(t_triangle3d *t, t_point3d *centre, float degreX, flo
 
 void transformationTriangle3d_BH(t_triangle3d *t, double mat[4][4]);
 
-
+void freeTriangle(t_triangle3d *t);
 /*
  * Zone a adapter...
  */

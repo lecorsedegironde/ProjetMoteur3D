@@ -4,8 +4,14 @@
 #include <stdlib.h>
 #include <SDL/SDL.h>
 
+//#define BIG_SCREEN
+#ifndef BIG_SCREEN
+#define RX 1024
+#define RY 768
+#else
 #define RX 800
 #define RY 600
+#endif
 
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define MAX(a,b) ((a)>(b)?(a):(b))
@@ -51,9 +57,13 @@
 (c==JAUNEF)?"JAUNEF":(\
 (c==PALEC)?"PALEC":(\
 (c==PALEF)?"PALEF":(\
-(c==ROSEC?"ROSEC":(\
+(c==ROSEC)?"ROSEC":(\
 (c==ROSEF)?"ROSEF":(\
-"AUTRE"))))))))))))))))))
+(c==MARRON1)?"MARRON1":(\
+(c==MARRON2)?"MARRON2":(\
+(c==MARRON3)?"MARRON3":(\
+(c==MARRON4)?"MARRON4":(\
+"AUTRE")))))))))))))))))))))
 
 
 typedef struct {

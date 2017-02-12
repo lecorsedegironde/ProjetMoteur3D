@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
     scn_arb = ajouter_relation(scn_sol, arbre(30, 150, 30)); // l'arbre repose sur le sol
     translationScene3d(scn_arb,
                        definirVecteur3d(500, 75, 0)); //75 car il est centre sur le sol et on le veut pose dessus
-    printf("%d faces\n", nb_faces);
+//    printf("%d faces\n", nb_faces);
 
     //rotationScene3d(scn_cam2, origine, 0, 30, 0);
     //translationScene3d(scn_cam2, definirVecteur3d(0,200,0));
@@ -127,13 +127,13 @@ int main(int argc, char **argv) {
 
     while (/*++i < DUREE * 60 && */event.type != SDL_QUIT) // DUREE " * 60FPS
     {
-        ++i;
         effacerFenetre(surface, 0);
 
         if (SDL_PollEvent(&event)) {
             handle_events();
         }
         if (!is_pause) {
+            ++i;
             rotationScene3d(scn_r1, origine, 0, 0, sens * 5);
             rotationScene3d(scn_r2, origine, 0, 0, sens * 5);
             rotationScene3d(scn_r3, origine, 0, 0, sens * 5);
@@ -156,8 +156,8 @@ int main(int argc, char **argv) {
     }
     SDL_Quit();
 
-    usage_lib_3d();
-    usage_lib_objet_3d();
+//    usage_lib_3d();
+//    usage_lib_objet_3d();
     usage_lib_scene_3d();
 
     return 0;

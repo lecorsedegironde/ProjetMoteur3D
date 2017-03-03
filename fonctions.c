@@ -73,7 +73,7 @@ void (*transformationObjet3d)(t_objet3d *pt_objet, double mat[4][4]) = transform
 /** END SECTION OBJET_3D **/
 
 /** START SECTION SCENE_3D **/
-t_scene3d *(*definirScene3d)(t_objet3d *pt_objet) = definirScene3d_PA;
+t_scene3d *(*definirScene3d)(t_objet3d *pt_objet) = definirScene3d_BH;
 
 t_scene3d *(*ajouter_relation)(t_scene3d *pt_feuille, t_objet3d *pt_objet) = ajouter_relation_PA;
 

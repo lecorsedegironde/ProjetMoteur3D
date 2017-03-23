@@ -28,8 +28,15 @@ t_scene3d *definirScene3d_BH(t_objet3d *pt_objet) {
 }
 
 // ajout de l'objet en tete des fils
+/**
+ * Ajouter l'objet en tête des fils de la feuille/noeud ?
+ *
+ * @param pt_feuille le truc où on doit ajouter le fils
+ * @param pt_objet le fils à ajouter
+ * @return la nouvelle scene avec le fils
+ */
 t_scene3d *ajouter_relation_BH(t_scene3d *pt_feuille, t_objet3d *pt_objet) {
-    printf("Hello lol");
+//    t_scene3d *
 
     return NULL;
 }

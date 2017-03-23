@@ -681,8 +681,6 @@ void translationObjet3d_BH(t_objet3d *pt_objet, t_point3d *vecteur) {
     transformationObjet3d(pt_objet, matTranslation);
 }
 
-void translationObjet3d_fast_BH(t_objet3d *pt_objet, t_point3d *vecteur) {}
-
 /**
  * Applique une rotation à un objet 3d
  *
@@ -703,9 +701,6 @@ void rotationObjet3d_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, fl
     transformationObjet3d(pt_objet, matRotation);
     translationObjet3d(pt_objet, centre);
 }
-
-void rotationObjet3d_fast_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {}
-
 
 /**
  * Applique une matrice de transformation à un objet

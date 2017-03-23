@@ -61,13 +61,8 @@ void (*dessinerObjet3d)(t_surface *surface, t_objet3d *pt_objet, t_objet3d *came
 
 void (*translationObjet3d)(t_objet3d *pt_objet, t_point3d *vecteur) = translationObjet3d_BH;
 
-void (*translationObjet3d_fast)(t_objet3d *pt_objet, t_point3d *vecteur) = translationObjet3d_fast_BH;
-
 void (*rotationObjet3d)(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY,
                         float degreZ) = rotationObjet3d_BH;
-
-void (*rotationObjet3d_fast)(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY,
-                             float degreZ) = rotationObjet3d_fast_BH;
 
 void (*transformationObjet3d)(t_objet3d *pt_objet, double mat[4][4]) = transformationObjet3d_BH;
 /** END SECTION OBJET_3D **/

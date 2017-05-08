@@ -490,11 +490,6 @@ t_objet3d *copierObjet3d_BH(t_objet3d *o) {
     if (o->est_camera == true) {
         copyObject = camera(o->largeur, o->hauteur, o->proche, o->loin, o->distance_ecran);
     } else {
-        //Trier avant la copie semble être une bonne idée
-        if (!o->est_trie) {
-            mergeSortZ(&o->tete);
-            o->est_trie = true;
-        }
         copyObject = objet_vide();
         copyObject->tete = cloneMaillon(o->tete);
         copyObject->est_trie = true;
@@ -631,27 +626,17 @@ t_point3d *centreGraviteObjet3d_BH(t_objet3d *o) {
 void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) {
     t_maillon *maillonTMP = pt_objet->tete;
 
-    //Trier liste
-    if (!pt_objet->est_trie) mergeSortZ(&maillonTMP);
+    if (maillonTMP != NULL) {
+        //Trier liste
+        if (!pt_objet->est_trie) mergeSortZ(&maillonTMP);
 
-    t_maillon *first = NULL;
-
-    //Invert list
-    while (maillonTMP != NULL) {
-        t_maillon *nextMaillon = maillonTMP->pt_suiv;
-        maillonTMP->pt_suiv = first;
-        first = maillonTMP;
-        maillonTMP = nextMaillon;
+        while (maillonTMP->pt_suiv != NULL) {
+            remplirTriangle3d(surface, maillonTMP->face, maillonTMP->couleur, camera->largeur, camera->hauteur,
+                              camera->distance_ecran);
+            maillonTMP = maillonTMP->pt_suiv;
+        }
     }
 
-    maillonTMP = first;
-
-
-    while (maillonTMP != NULL) {
-        remplirTriangle3d(surface, maillonTMP->face, maillonTMP->couleur, camera->largeur, camera->hauteur,
-                          camera->distance_ecran);
-        maillonTMP = maillonTMP->pt_suiv;
-    }
 }
 
 /**
@@ -791,7 +776,7 @@ t_maillon *sortedMergeZ(t_maillon *a, t_maillon *b) {
         result = a;
     } else {
         //Ici on vérifie l'ordre des données
-        if (zmoyen(a->face) >= zmoyen(b->face)) {
+        if (zmoyen(a->face) <= zmoyen(b->face)) {
             result = a;
             //Récursion
             result->pt_suiv = sortedMergeZ(a->pt_suiv, b);

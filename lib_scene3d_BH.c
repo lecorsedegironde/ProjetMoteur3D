@@ -47,17 +47,7 @@ t_scene3d *ajouter_relation_BH(t_scene3d *pt_feuille, t_objet3d *pt_objet) {
 }
 
 void translationScene3d_BH(t_scene3d *pt_scene, t_point3d *vecteur) {
-//    translationScene3d_PA(pt_scene, vecteur);
-    if (pt_scene != NULL) {
-        translationObjet3d(pt_scene->objet, vecteur);
-        //Pour les freres
-        translationScene3d(pt_scene->pt_suiv, vecteur);
 
-        //Pour le fils
-        t_point3d *vect = definirVecteur3d(0,0,0);
-        multiplication_vecteur(vect, pt_scene->descendant, vecteur);
-        translationScene3d_PA(pt_scene->pt_fils, vecteur);
-    }
 }
 
 void rotationScene3d_BH(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY, float degreZ);

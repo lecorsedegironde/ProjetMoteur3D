@@ -562,6 +562,7 @@ void composerObjet3d_limite_en_z_BH(t_objet3d *o, t_objet3d *o2, t_objet3d *came
 
     while (maillonTMP->pt_suiv != NULL) {
         double zMoyen = zmoyen(maillonTMP->face);
+
         //Si le zmoyen ne rentre pas on retire la face
         if (zMoyen < camera->loin || zMoyen > camera->proche) {
             //On retire le maillon

@@ -37,13 +37,13 @@ t_scene3d *definirScene3d_BH(t_objet3d *pt_objet) {
  * @return la nouvelle scene avec le fils
  */
 t_scene3d *ajouter_relation_BH(t_scene3d *pt_feuille, t_objet3d *pt_objet) {
-    ajouter_relation_PA(pt_feuille, pt_objet);
+//    ajouter_relation_PA(pt_feuille, pt_objet);
 //
-//    t_scene3d *pt_fils = definirScene3d(pt_objet);
-//    pt_fils->pt_pere = pt_feuille;
-//    pt_fils->pt_suiv = pt_feuille->pt_fils;
-//    pt_feuille->pt_fils = pt_fils;
-    return pt_feuille;
+    t_scene3d *pt_fils = definirScene3d(pt_objet);
+    pt_fils->pt_pere = pt_feuille;
+    pt_fils->pt_suiv = pt_feuille->pt_fils;
+    pt_feuille->pt_fils = pt_fils;
+    return pt_fils;
 }
 
 void translationScene3d_BH(t_scene3d *pt_scene, t_point3d *vecteur) {

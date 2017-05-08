@@ -550,43 +550,30 @@ void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {
  */
 void composerObjet3d_limite_en_z_BH(t_objet3d *o, t_objet3d *o2, t_objet3d *camera) {
     //Composer les objets avec uniquement les faces qui apparaissent dans la camera
-    //On va quand même tester, voir si c'est pas des cameras
-    //Chuis pas censé être con mais on sait jamais
-    if (!o->est_camera && !o2->est_camera) {
-        t_maillon *maillonTMP = o->tete;
-        t_maillon *oldMaillon = o->tete;
-        t_bool o1Over = false;
-        t_bool isHead = true;
-
-        if (maillonTMP == NULL) {
-            maillonTMP = o2->tete;
-            oldMaillon = o2->tete;
-            o->tete = maillonTMP;
-            o1Over = true;
-        }
-        while (maillonTMP->pt_suiv != NULL) {
-            double zMoyen = zmoyen(maillonTMP->face);
-            //Si le zmoyen ne rentre pas on vire la face
-            if (zMoyen < camera->loin || zMoyen > camera->proche) {
-                //On retire le maillon
-                if (!isHead) oldMaillon->pt_suiv = maillonTMP->pt_suiv;
-                else o->tete = maillonTMP->pt_suiv;
-            } else {
-                if (isHead) isHead = false;
-                oldMaillon = maillonTMP;
-            }
-
-            //On passe au maillon suivant
-            maillonTMP = maillonTMP->pt_suiv;
-
-            if (maillonTMP->pt_suiv == NULL && !o1Over && o2->tete != NULL) {
-                maillonTMP->pt_suiv = o2->tete;
-                o1Over = true;
-            }
-        }
-    }
+    //On commence par composer les deux objets grace à la fonction idoine o2 est free dans cette fonction
+    composerObjet3d(o, o2);
+    //o n'est plus trié
     o->est_trie = false;
-    free(o2);
+    //On récoupère la tête
+    t_maillon *maillonTMP = o->tete;
+    t_maillon *oldMaillon = o->tete;
+    //Est-ce que c'est la tête de la liste ?
+    t_bool isHead = true;
+
+    while (maillonTMP->pt_suiv != NULL) {
+        double zMoyen = zmoyen(maillonTMP->face);
+        //Si le zmoyen ne rentre pas on retire la face
+        if (zMoyen < camera->loin || zMoyen > camera->proche) {
+            //On retire le maillon
+            if (!isHead) oldMaillon->pt_suiv = maillonTMP->pt_suiv;
+            else o->tete = maillonTMP->pt_suiv;
+        } else {
+            if (isHead) isHead = false;
+            oldMaillon = maillonTMP;
+        }
+        //On passe au maillon suivant
+        maillonTMP = maillonTMP->pt_suiv;
+    }
 }
 
 /**

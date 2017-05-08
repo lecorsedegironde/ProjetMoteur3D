@@ -92,10 +92,19 @@ int main(int argc, char **argv) {
     t_scene3d *scn_sol, *scn_voiture, *scn_arb, *scn_r1, *scn_r2, *scn_r3, *scn_r4;
     int i = 0, sens = 1;
 
-    scn_sol = definirScene3d(damier(1000, 1000, 11, 11));
+//    scn_sol = definirScene3d(damier(1000, 1000, 11, 11));
+//
+//    cam = camera(1.0, 1.0, -100, -2000, -400);
+//    cams[0] = ajouter_relation(scn_sol, cam);
+    t_objet3d *dam = NULL;
 
-    cam = camera(1.0, 1.0, -100, -2000, -400);
-    cams[0] = ajouter_relation(scn_sol, cam);
+    dam = damier(1000, 1000, 11.7, 11.2);
+    cam = camera(1.0,1.0,-100,-2000,-400);
+    scn_sol = definirScene3d(cam);
+    scene = scn_sol;
+    //changerCamera(scene);
+
+    ajouter_relation(scn_sol, dam);
 
     scn_voiture = ajouter_relation(scn_sol, parallelepipede(100, 50, 50));
     translationScene3d(scn_voiture, centre_voiture);
@@ -117,8 +126,8 @@ int main(int argc, char **argv) {
     //rotationScene3d(scn_cam2, origine, 0, 30, 0);
     //translationScene3d(scn_cam2, definirVecteur3d(0,200,0));
 
-    changerCamera(cams[0]);
-    scene = cams[0];
+//    changerCamera(cams[0]);
+//    scene = cams[0];
 
 
     surface = creerFenetre(RX, RY);
@@ -156,8 +165,8 @@ int main(int argc, char **argv) {
     }
     SDL_Quit();
 
-//    usage_lib_3d();
-//    usage_lib_objet_3d();
+    usage_lib_3d();
+    usage_lib_objet_3d();
     usage_lib_scene_3d();
 
     return 0;

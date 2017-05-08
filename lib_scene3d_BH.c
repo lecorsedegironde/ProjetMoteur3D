@@ -1,4 +1,5 @@
 #include "lib_scene3d.h"
+#include "lib_mat.h"
 
 /**
  * On commence par définir une scene avec un objet
@@ -18,9 +19,9 @@ t_scene3d *definirScene3d_BH(t_objet3d *pt_objet) {
     //Set up matrix
     //Actually matrix are the same as we copy their value wu can use only one
     double matrix[4][4] = {{1, 0, 0, 0},
-                               {0, 1, 0, 0},
-                               {0, 0, 1, 0},
-                               {0, 0, 0, 1}};
+                           {0, 1, 0, 0},
+                           {0, 0, 1, 0},
+                           {0, 0, 0, 1}};
     //Copy the array into the struct one
     memcpy(&scene3d->descendant, &matrix, sizeof matrix);
     memcpy(&scene3d->montant, &matrix, sizeof matrix);
@@ -36,16 +37,34 @@ t_scene3d *definirScene3d_BH(t_objet3d *pt_objet) {
  * @return la nouvelle scene avec le fils
  */
 t_scene3d *ajouter_relation_BH(t_scene3d *pt_feuille, t_objet3d *pt_objet) {
-//    t_scene3d *
-
-    return NULL;
+    ajouter_relation_PA(pt_feuille, pt_objet);
+//
+//    t_scene3d *pt_fils = definirScene3d(pt_objet);
+//    pt_fils->pt_pere = pt_feuille;
+//    pt_fils->pt_suiv = pt_feuille->pt_fils;
+//    pt_feuille->pt_fils = pt_fils;
+    return pt_feuille;
 }
 
-void translationScene3d_BH(t_scene3d *pt_scene, t_point3d *vecteur);
+void translationScene3d_BH(t_scene3d *pt_scene, t_point3d *vecteur) {
+//    translationScene3d_PA(pt_scene, vecteur);
+    if (pt_scene != NULL) {
+        translationObjet3d(pt_scene->objet, vecteur);
+        //Pour les freres
+        translationScene3d(pt_scene->pt_suiv, vecteur);
+
+        //Pour le fils
+        t_point3d *vect = definirVecteur3d(0,0,0);
+        multiplication_vecteur(vect, pt_scene->descendant, vecteur);
+        translationScene3d_PA(pt_scene->pt_fils, vecteur);
+    }
+}
 
 void rotationScene3d_BH(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY, float degreZ);
 
-void dessinerScene3d_BH(t_surface *surface, t_scene3d *pt_scene);
+void dessinerScene3d_BH(t_surface *surface, t_scene3d *pt_scene) {
+    dessinerScene3d_PA(surface, pt_scene);
+}
 
 // modifie l'arbre de la scene pour que pt_objet en soit la racine, pt_racine ne veut plus rien dire
 void changerCamera_BH(t_scene3d *pt_objet);

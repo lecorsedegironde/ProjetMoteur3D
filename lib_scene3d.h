@@ -59,11 +59,14 @@ void rotationScene3d_BH(t_scene3d *pt_scene, t_point3d *centre, float degreX, fl
 
 void dessinerScene3d_BH(t_surface *surface, t_scene3d *pt_scene);
 
-void changerCamera_BH(
-        t_scene3d *pt_objet); // modifie l'arbre de la scene pour que pt_objet en soit la racine, pt_racine ne veut plus rien dire
+// modifie l'arbre de la scene pour que pt_objet en soit la racine, pt_racine ne veut plus rien dire
+void changerCamera_BH(t_scene3d *pt_objet);
 
 //Custom functions
+void compose_scene(t_scene3d *scene, t_objet3d *composeObject, t_objet3d *camera, double des[4][4], double mont[4][4]);
+
 void matrice_translation(t_point3d *vecteur, double mat[4][4]);
+
 void matrice_translation_inv(t_point3d *vecteur, double mat[4][4]);
 
 /*

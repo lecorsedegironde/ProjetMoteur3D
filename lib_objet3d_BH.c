@@ -539,7 +539,7 @@ void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {
 
 /**
  * Prend 2 objets 3d pour n'en faire qu'un seul et les enlève les faces qui n'apparaissent pas
- * @param o
+ * @param o est retourné
  * @param o2
  * @param camera
  */
@@ -687,6 +687,15 @@ void transformationObjet3d_BH(t_objet3d *pt_objet, double mat[4][4]) {
         transformationTriangle3d(maillonTMP->face, mat);
         maillonTMP = maillonTMP->pt_suiv;
     }
+}
+
+/**
+ * Fonction qui permet de trier un objet
+ *
+ * @param objet3d objet à trier
+ */
+void sortObjet3d(t_objet3d * objet3d) {
+    mergeSortZ(&objet3d->tete);
 }
 
 /**

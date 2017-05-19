@@ -46,21 +46,27 @@ t_scene3d *ajouter_relation_BH(t_scene3d *pt_feuille, t_objet3d *pt_objet) {
 
 void translationScene3d_BH(t_scene3d *pt_scene, t_point3d *vecteur) {
 //    translationScene3d_PA(pt_scene, vecteur);
-//    printf("Oups");
-    //Matrices de translation et d'invertion
-    double mat[4][4];
-    double inv[4][4];
-    //Matrice temporaire
-    double temp[4][4];
-    matrice_translation(vecteur, mat);
-    matrice_translation_inv(vecteur, inv);
-    if(pt_scene!=NULL){
-        multiplication_matrice(temp,mat,pt_scene->descendant);
+//    printf("Test");
+//    /*Matrices de translation et d'invertion
+    if (pt_scene != NULL) {
+        double des[4][4];
+        double mont[4][4];
+        //Matrice temporaire
+        double temp[4][4];
+        if (pt_scene->objet->est_camera) {
+            matrice_translation_inv(vecteur, des);
+            matrice_translation(vecteur, mont);
+        } else {
+            matrice_translation(vecteur, des);
+            matrice_translation_inv(vecteur, mont);
+        }
+        multiplication_matrice(temp, des, pt_scene->descendant);
         memcpy(&pt_scene->descendant, &temp, sizeof temp);
 
-        multiplication_matrice(temp,pt_scene->montant,inv);
+        multiplication_matrice(temp, mont, pt_scene->montant);
         memcpy(&pt_scene->montant, &temp, sizeof temp);
     }
+    //*/
 }
 
 void rotationScene3d_BH(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY, float degreZ);
@@ -69,13 +75,53 @@ void dessinerScene3d_BH(t_surface *surface, t_scene3d *pt_scene) {
     assert(pt_scene->objet->est_camera);
     //Save camera for easier use
     t_objet3d *camera = pt_scene->objet;
-    t_scene3d *son = pt_scene->pt_fils;
-    //Draw sons
-    while (son != NULL) {
-        t_scene3d *brother = son->pt_suiv;
-        dessinerObjet3d(surface, son->objet, camera);
-//        if (brother != )
-        son = son->pt_fils;
+
+    //Create Big 3d object containing all triangles
+    t_objet3d *composeObject = objet_vide();
+
+    t_point3d *vector = definirVecteur3d(0, 0, 0);
+    double des[4][4];
+    double mont[4][4];
+    double temp[4][4];
+    //Create identity matrix
+    matrice_translation(vector, des);
+    matrice_translation_inv(vector, mont);
+
+    multiplication_matrice(temp, des, pt_scene->descendant);
+    memcpy(&des, &temp, sizeof temp);
+    multiplication_matrice(temp, pt_scene->montant, mont);
+    memcpy(&mont, &temp, sizeof temp);
+
+    if (pt_scene->pt_fils != NULL) compose_scene(pt_scene->pt_fils, composeObject, camera, des, mont);
+    //Tri objet
+    sortObjet3d(composeObject);
+    //Dessiner objet
+    dessinerObjet3d(surface, composeObject, camera);
+    //Free object
+    libererObjet3d(composeObject);
+}
+
+void compose_scene(t_scene3d *scene, t_objet3d *composeObject, t_objet3d *camera, double des[4][4], double mont[4][4]) {
+    if (scene != NULL) {
+        //Create temp matrix for applying to object
+        double des_temp[4][4];
+        double mont_temp[4][4];
+        //Multiply matrix with scene mat
+        multiplication_matrice(des_temp, des, scene->descendant);
+        multiplication_matrice(mont_temp, scene->montant, mont);
+
+        //Copy object and apply transformations
+        t_objet3d *copy = copierObjet3d(scene->objet);
+        transformationObjet3d(copy, des_temp);
+
+        //Compose object into big object
+        composerObjet3d_limite_en_z(composeObject, copy, camera);
+
+        //Compose sons
+        compose_scene(scene->pt_fils, composeObject, camera, des_temp, mont_temp);
+        //Compose siblings
+        compose_scene(scene->pt_suiv, composeObject, camera, des, mont);
+
     }
 }
 

@@ -109,6 +109,8 @@ t_maillon *cloneMaillon(t_maillon* liste);
 
 t_objet3d *sphereCreation(double r, double nlat, double nlong, t_bool colorGeneration);
 
+void sortObjet3d(t_objet3d * objet3d);
+
 /*
  * Zone a adapter...
  */

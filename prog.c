@@ -96,17 +96,9 @@ int main(int argc, char **argv) {
 
     cam = camera(1.0, 1.0, -100, -2000, -400);
     cams[0] = ajouter_relation(scn_sol, cam);
-//    t_objet3d *dam = NULL;
-//
-//    dam = damier(1000, 1000, 11.7, 11.2);
-//    cam = camera(1.0,1.0,-100,-2000,-400);
-//    scn_sol = definirScene3d(cam);
-//    scene = scn_sol;
-    //changerCamera(scene);
-
-//    ajouter_relation(scn_sol, dam);
 
     scn_voiture = ajouter_relation(scn_sol, parallelepipede(100, 50, 50));
+    //TODO: Check state
     translationScene3d(scn_voiture, centre_voiture);
 
     scn_r1 = ajouter_relation(scn_voiture, sphere_amiga(20, 6, 8));

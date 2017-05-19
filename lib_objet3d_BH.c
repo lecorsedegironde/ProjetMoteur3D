@@ -636,7 +636,6 @@ void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *came
             maillonTMP = maillonTMP->pt_suiv;
         }
     }
-
 }
 
 /**
@@ -664,7 +663,7 @@ void translationObjet3d_BH(t_objet3d *pt_objet, t_point3d *vecteur) {
  * @param degreZ
  */
 void rotationObjet3d_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {
-//Création de la matrice de rotation
+    //Création de la matrice de rotation
     double a = cos(degreX), b = sin(degreX), c = cos(degreY), d = sin(degreY), e = cos(degreZ), f = sin(degreZ);
     double matRotation[4][4] = {{c * e,                (-c) * f,             d,        0},
                                 {b * d * e + a * f,    -(b * d * f) + a * e, -(b * c), 0},

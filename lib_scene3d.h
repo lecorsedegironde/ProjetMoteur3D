@@ -62,6 +62,10 @@ void dessinerScene3d_BH(t_surface *surface, t_scene3d *pt_scene);
 void changerCamera_BH(
         t_scene3d *pt_objet); // modifie l'arbre de la scene pour que pt_objet en soit la racine, pt_racine ne veut plus rien dire
 
+//Custom functions
+void matrice_translation(t_point3d *vecteur, double mat[4][4]);
+void matrice_translation_inv(t_point3d *vecteur, double mat[4][4]);
+
 /*
  * Zone a adapter...
  */

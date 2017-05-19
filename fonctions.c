@@ -72,7 +72,7 @@ t_scene3d *(*definirScene3d)(t_objet3d *pt_objet) = definirScene3d_BH;
 
 t_scene3d *(*ajouter_relation)(t_scene3d *pt_feuille, t_objet3d *pt_objet) = ajouter_relation_BH;
 
-void (*translationScene3d)(t_scene3d *pt_scene, t_point3d *vecteur) = translationScene3d_PA;
+void (*translationScene3d)(t_scene3d *pt_scene, t_point3d *vecteur) = translationScene3d_BH;
 
 void (*rotationScene3d)(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY,
                         float degreZ) = rotationScene3d_PA;

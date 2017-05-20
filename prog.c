@@ -8,7 +8,6 @@
 #define N_CAMERA 1
 //#define DUREE 3*60
 
-int x = 0, y = 0;
 t_scene3d *scene, *cams[N_CAMERA];
 t_bool is_pause = false;
 t_bool quit = false;
@@ -23,37 +22,31 @@ void handle_events(Input in) {
     int dx = 0, dy = 0, dz = 0;
     float rx = 0, ry = 0;
 
-    if (in.mousebuttons[SDL_BUTTON_LEFT]) {
-        int xd, yd;
-
-        xd = in.mousex;
-        yd = in.mousey;
+    if (in.mouse_motion && in.mousebuttons[SDL_BUTTON_LEFT]) {
         //rotation de la camera active
-        // definition : 100px = rotation de 90° sur un axe
-        rx = (float) (90.0 * (yd - y) / 100.0);
-        ry = (float) (90.0 * (xd - x) / 100.0);
-
-        x = xd;
-        y = yd;
-    }
-
-    if (in.key[SDLK_UP]) {
-        dz--;
-    } else if (in.key[SDLK_DOWN]) {
-        dz++;
+        // definition : 200px = rotation de 90° sur un axe
+        rx = (float) (90.0 * (in.mousey - in.mouseyp) / 200.0);
+        ry = (float) (90.0 * (in.mousex - in.mousexp) / 200.0);
     }
 
     if (in.key[SDLK_w]) {
-        dy++;
+        dz--;
     } else if (in.key[SDLK_s]) {
+        dz++;
+    }
+
+    if (in.key[SDLK_a]) {
+        dx--;
+    } else if (in.key[SDLK_d]) {
+        dx++;
+    }
+
+    if (in.key[SDLK_UP]) {
+        dy++;
+    } else if (in.key[SDLK_DOWN]) {
         dy--;
     }
 
-    if (in.key[SDLK_LEFT]) {
-        dx--;
-    } else if (in.key[SDLK_RIGHT]) {
-        dx++;
-    }
 
     if (in.key[SDLK_r]) {
         dx = -dxTotal;

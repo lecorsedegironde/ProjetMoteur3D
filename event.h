@@ -4,12 +4,12 @@
 #include "lib_objet3d.h"
 
 //Events
-t_bool isMouseDown;
 
 typedef struct {
     char key[SDLK_LAST];
     int mousex, mousey;
-    int mousexdown, mouseydown;
+    int mousexp, mouseyp;
+    t_bool mouse_motion;
     char mousebuttons[8];
     t_bool quit;
 } Input;

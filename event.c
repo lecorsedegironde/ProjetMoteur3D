@@ -8,6 +8,9 @@ void UpdateEvents(Input *in) {
     in->mousebuttons[SDL_BUTTON_WHEELUP] = 0;
     in->mousebuttons[SDL_BUTTON_WHEELDOWN] = 0;
 
+    //Mouse motion may have stopped
+    in->mouse_motion = false;
+
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             //Key pressed updated in tab
@@ -22,27 +25,22 @@ void UpdateEvents(Input *in) {
 
                 //Move mouse
             case SDL_MOUSEMOTION:
-                if (isMouseDown) {
-                    in->mousexdown = event.motion.x;
-                    in->mouseydown = event.motion.y;
-                }
+                in->mousexp = in->mousex;
+                in->mouseyp = in->mousey;
                 in->mousex = event.motion.x;
                 in->mousey = event.motion.y;
+                in->mouse_motion = true;
                 break;
 
                 //On click
             case SDL_MOUSEBUTTONDOWN:
                 in->mousebuttons[event.button.button] = 1;
-                if (event.button.button == SDL_BUTTON_LEFT)
-                    isMouseDown = true;
                 break;
 
                 //On click release
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button != SDL_BUTTON_WHEELUP && event.button.button != SDL_BUTTON_WHEELDOWN)
                     in->mousebuttons[event.button.button] = 0;
-                if (event.button.button == SDL_BUTTON_LEFT)
-                    isMouseDown = false;
                 break;
 
                 //On quit

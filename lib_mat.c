@@ -1,7 +1,8 @@
 #include "lib_3d.h"
 #include "lib_mat.h"
 
-void multiplication_vecteur(t_point3d *v1, double m[4][4], t_point3d *v2) // v1 = m*v2
+// v1 = m*v2
+void multiplication_vecteur(t_point3d *v1, double m[4][4], t_point3d *v2)
 {
 	int i, j;
 
@@ -15,7 +16,8 @@ void multiplication_vecteur(t_point3d *v1, double m[4][4], t_point3d *v2) // v1 
 	}
 }
 
-void multiplication_matrice(double m1[4][4], double m2[4][4], double m3[4][4]) // m1 = m2*m3
+// m1 = m2*m3
+void multiplication_matrice(double m1[4][4], double m2[4][4], double m3[4][4])
 {
 	int i, j, k;
 
@@ -32,6 +34,7 @@ void multiplication_matrice(double m1[4][4], double m2[4][4], double m3[4][4]) /
 	}
 }
 
+//m1 = m2
 void copier_matrice(double m1[4][4], double m2[4][4])
 {
 	int i, j;
@@ -42,5 +45,53 @@ void copier_matrice(double m1[4][4], double m2[4][4])
 		{
 			m1[i][j] = m2[i][j];
 		}
+	}
+}
+
+void matrice_translation(t_point3d *vecteur, double mat[4][4]) {
+	if (vecteur != NULL) {
+		mat[0][0] = 1;
+		mat[0][1] = 0;
+		mat[0][2] = 0;
+		mat[0][3] = vecteur->xyzt[0];
+
+		mat[1][0] = 0;
+		mat[1][1] = 1;
+		mat[1][2] = 0;
+		mat[1][3] = vecteur->xyzt[1];
+
+		mat[2][0] = 0;
+		mat[2][1] = 0;
+		mat[2][2] = 1;
+		mat[2][3] = vecteur->xyzt[2];
+
+		mat[3][0] = 0;
+		mat[3][1] = 0;
+		mat[3][2] = 0;
+		mat[3][3] = 1;
+	}
+}
+
+void matrice_translation_inv(t_point3d *vecteur, double mat[4][4]) {
+	if (vecteur != NULL) {
+		mat[0][0] = 1;
+		mat[0][1] = 0;
+		mat[0][2] = 0;
+		mat[0][3] = -vecteur->xyzt[0];
+
+		mat[1][0] = 0;
+		mat[1][1] = 1;
+		mat[1][2] = 0;
+		mat[1][3] = -vecteur->xyzt[1];
+
+		mat[2][0] = 0;
+		mat[2][1] = 0;
+		mat[2][2] = 1;
+		mat[2][3] = -vecteur->xyzt[2];
+
+		mat[3][0] = 0;
+		mat[3][1] = 0;
+		mat[3][2] = 0;
+		mat[3][3] = 1;
 	}
 }

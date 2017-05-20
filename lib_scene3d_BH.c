@@ -45,15 +45,14 @@ t_scene3d *ajouter_relation_BH(t_scene3d *pt_feuille, t_objet3d *pt_objet) {
 }
 
 void translationScene3d_BH(t_scene3d *pt_scene, t_point3d *vecteur) {
-//    translationScene3d_PA(pt_scene, vecteur);
-//    printf("Test");
-//    /*Matrices de translation et d'invertion
+//    Matrices de translation et d'invertion
     if (pt_scene != NULL) {
         double des[4][4];
         double mont[4][4];
         //Matrice temporaire
         double temp[4][4];
         if (pt_scene->objet->est_camera) {
+            //Ouch
             matrice_translation_inv(vecteur, des);
             matrice_translation(vecteur, mont);
         } else {
@@ -66,7 +65,6 @@ void translationScene3d_BH(t_scene3d *pt_scene, t_point3d *vecteur) {
         multiplication_matrice(temp, mont, pt_scene->montant);
         memcpy(&pt_scene->montant, &temp, sizeof temp);
     }
-    //*/
 }
 
 void rotationScene3d_BH(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY, float degreZ);
@@ -127,51 +125,3 @@ void compose_scene(t_scene3d *scene, t_objet3d *composeObject, t_objet3d *camera
 
 // modifie l'arbre de la scene pour que pt_objet en soit la racine, pt_racine ne veut plus rien dire
 void changerCamera_BH(t_scene3d *pt_objet);
-
-void matrice_translation(t_point3d *vecteur, double mat[4][4]) {
-    if (vecteur != NULL) {
-        mat[0][0] = 1;
-        mat[0][1] = 0;
-        mat[0][2] = 0;
-        mat[0][3] = vecteur->xyzt[0];
-
-        mat[1][0] = 0;
-        mat[1][1] = 1;
-        mat[1][2] = 0;
-        mat[1][3] = vecteur->xyzt[1];
-
-        mat[2][0] = 0;
-        mat[2][1] = 0;
-        mat[2][2] = 1;
-        mat[2][3] = vecteur->xyzt[2];
-
-        mat[3][0] = 0;
-        mat[3][1] = 0;
-        mat[3][2] = 0;
-        mat[3][3] = 1;
-    }
-}
-
-void matrice_translation_inv(t_point3d *vecteur, double mat[4][4]) {
-    if (vecteur != NULL) {
-        mat[0][0] = 1;
-        mat[0][1] = 0;
-        mat[0][2] = 0;
-        mat[0][3] = -vecteur->xyzt[0];
-
-        mat[1][0] = 0;
-        mat[1][1] = 1;
-        mat[1][2] = 0;
-        mat[1][3] = -vecteur->xyzt[1];
-
-        mat[2][0] = 0;
-        mat[2][1] = 0;
-        mat[2][2] = 1;
-        mat[2][3] = -vecteur->xyzt[2];
-
-        mat[3][0] = 0;
-        mat[3][1] = 0;
-        mat[3][2] = 0;
-        mat[3][3] = 1;
-    }
-}

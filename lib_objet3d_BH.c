@@ -1,5 +1,6 @@
 #include <math.h>
 #include "lib_objet3d.h"
+#include "lib_mat.h"
 
 /**
  * Crée un objet 3d vide
@@ -646,10 +647,8 @@ void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *came
  */
 void translationObjet3d_BH(t_objet3d *pt_objet, t_point3d *vecteur) {
     //Création de la matrice
-    double matTranslation[4][4] = {{1, 0, 0, vecteur->xyzt[0]},
-                                   {0, 1, 0, vecteur->xyzt[1]},
-                                   {0, 0, 1, vecteur->xyzt[2]},
-                                   {0, 0, 0, 1}};
+    double matTranslation[4][4];
+    matrice_translation(vecteur, matTranslation);
     transformationObjet3d(pt_objet, matTranslation);
 }
 

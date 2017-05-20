@@ -190,10 +190,8 @@ void remplirTriangle3d_BH(t_surface *surface, t_triangle3d *triangle, Uint32 c, 
  */
 void translationTriangle3d_BH(t_triangle3d *t, t_point3d *vecteur) {
     //Création de la matrice
-    double matTranslation[4][4] = {{1, 0, 0, vecteur->xyzt[0]},
-                                   {0, 1, 0, vecteur->xyzt[1]},
-                                   {0, 0, 1, vecteur->xyzt[2]},
-                                   {0, 0, 0, 1}};
+    double matTranslation[4][4];
+    matrice_translation(vecteur, matTranslation);
     //Pour chaque point, on le multiplie avec la matrice
     transformationTriangle3d(t, matTranslation);
 }

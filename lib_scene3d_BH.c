@@ -1,6 +1,8 @@
 #include <assert.h>
+#include <math.h>
 #include "lib_scene3d.h"
 #include "lib_mat.h"
+#include "lib_3d.h"
 
 /**
  * On commence par définir une scene avec un objet
@@ -45,7 +47,7 @@ t_scene3d *ajouter_relation_BH(t_scene3d *pt_feuille, t_objet3d *pt_objet) {
 }
 
 void translationScene3d_BH(t_scene3d *pt_scene, t_point3d *vecteur) {
-//    Matrices de translation et d'invertion
+    //Matrices de translation et d'invertion
     if (pt_scene != NULL) {
         double des[4][4];
         double mont[4][4];
@@ -67,7 +69,31 @@ void translationScene3d_BH(t_scene3d *pt_scene, t_point3d *vecteur) {
     }
 }
 
-void rotationScene3d_BH(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY, float degreZ);
+void rotationScene3d_BH(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY, float degreZ) {
+    //Matrices de rotation et d'invertion
+    if (pt_scene != NULL) {
+        double des[4][4];
+        double mont[4][4];
+        //Matrice temporaire
+        double temp[4][4];
+
+        if (pt_scene->objet->est_camera) {
+            //Ouch
+            matrice_rotation(centre, degreX, degreY, degreZ, des);
+            matrice_rotation_inv(centre, degreX, degreY, degreZ, mont);
+        } else {
+            matrice_rotation_inv(centre, degreX, degreY, degreZ, des);
+            matrice_rotation(centre, degreX, degreY, degreZ, mont);
+        }
+
+        multiplication_matrice(temp, pt_scene->descendant, des);
+        memcpy(&pt_scene->descendant, &temp, sizeof temp);
+
+        multiplication_matrice(temp, mont, pt_scene->montant);
+        memcpy(&pt_scene->montant, &temp, sizeof temp);
+
+    }
+}
 
 void dessinerScene3d_BH(t_surface *surface, t_scene3d *pt_scene) {
     assert(pt_scene->objet->est_camera);

@@ -662,15 +662,14 @@ void translationObjet3d_BH(t_objet3d *pt_objet, t_point3d *vecteur) {
  * @param degreZ
  */
 void rotationObjet3d_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {
-    //Création de la matrice de rotation
-    double a = cos(degreX), b = sin(degreX), c = cos(degreY), d = sin(degreY), e = cos(degreZ), f = sin(degreZ);
-    double matRotation[4][4] = {{c * e,                (-c) * f,             d,        0},
-                                {b * d * e + a * f,    -(b * d * f) + a * e, -(b * c), 0},
-                                {-(a * d * e) + b * f, a * d * f + b * e,    a * c,    0},
-                                {0,                    0,                    0,        1}};
-    translationObjet3d(pt_objet, ORIGIN);
+    //Matrice de rotation
+    double matRotation[4][4];
+//    t_point3d * ori = ORIGIN;
+    matrice_rotation(centre, degreX, degreY, degreZ, matRotation);
+//    translationObjet3d(pt_objet, ori);
     transformationObjet3d(pt_objet, matRotation);
-    translationObjet3d(pt_objet, centre);
+//    translationObjet3d(pt_objet, centre);
+//    free(ori);
 }
 
 /**

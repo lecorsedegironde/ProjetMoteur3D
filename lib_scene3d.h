@@ -65,6 +65,10 @@ void changerCamera_BH(t_scene3d *pt_objet);
 //Custom functions
 void compose_scene(t_scene3d *scene, t_objet3d *composeObject, t_objet3d *camera, double des[4][4], double mont[4][4]);
 
+void matRotation(t_point3d*centre,float degreX,float degreY,float degreZ,double mat[4][4]);
+void matRotationinv(t_point3d*centre,float degreX,float degreY,float degreZ,double mat[4][4]);
+
+
 /*
  * Zone a adapter...
  */

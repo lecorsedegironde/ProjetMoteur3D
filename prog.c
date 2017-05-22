@@ -10,6 +10,7 @@
 
 t_scene3d *scene, *cams[N_CAMERA];
 t_bool is_pause = false;
+t_bool is_pause_released = true;
 t_bool quit = false;
 
 t_objet3d *cam;
@@ -52,12 +53,17 @@ void handle_events(Input in) {
         dx = -dxTotal;
         dy = -dyTotal;
         dz = -dzTotal;
-        rx = -rxTotal;
-        ry = -ryTotal;
+//        rx = -rxTotal;
+//        ry = -ryTotal;
     }
 
     if (in.key[SDLK_SPACE]) {
-        is_pause ? (is_pause = false) : (is_pause = true);
+        if (is_pause_released) {
+            is_pause_released = false;
+            is_pause ? (is_pause = false) : (is_pause = true);
+        }
+    } else {
+        is_pause_released = true;
     }
 
     if (in.key[SDLK_ESCAPE] || in.quit) {

@@ -78,7 +78,7 @@ void rotationScene3d_BH(t_scene3d *pt_scene, t_point3d *centre, float degreX, fl
         double temp[4][4];
 
         if (pt_scene->objet->est_camera) {
-            //Ouch
+//            Ouch
             matrice_rotation(centre, degreX, degreY, degreZ, des);
             matrice_rotation_inv(centre, degreX, degreY, degreZ, mont);
         } else {
@@ -150,4 +150,6 @@ void compose_scene(t_scene3d *scene, t_objet3d *composeObject, t_objet3d *camera
 }
 
 // modifie l'arbre de la scene pour que pt_objet en soit la racine, pt_racine ne veut plus rien dire
-void changerCamera_BH(t_scene3d *pt_objet);
+void changerCamera_BH(t_scene3d *pt_objet) {
+    changerCamera_PA(pt_objet);
+}

@@ -134,7 +134,10 @@ int main(int argc, char **argv) {
 
     while (/*++i < DUREE * 60 && */!quit) // DUREE " * 60FPS
     {
-        effacerFenetre(surface, 0);
+
+//        Uint32 couleur = (Uint32) (rand() % 100000000);
+        Uint32  couleur = 0;
+        effacerFenetre(surface, couleur);
 
         //Update events state
         UpdateEvents(&in);

@@ -90,36 +90,20 @@ void matrice_translation_inv(t_point3d *vecteur, double mat[4][4]) {
 //TODO: Change with quaternions if time
 void matrice_rotation(t_point3d *centre, float degreX, float degreY, float degreZ, double mat[4][4]) {
     if (centre != NULL) {
-        double temp[4][4];
-        double x, y, z;
-        x = degreX * M_PI / 180;
-        y = degreY * M_PI / 180;
-        z = degreZ * M_PI / 180;
-        double translation[4][4];
-        double translation_inv[4][4];
-        matrice_translation(centre, translation);
-        matrice_translation_inv(centre, translation_inv);
 
-        double mx[4][4] = {{1, 0, 0, 0},
-                           {0, cos(x), -sin(x), 0},
-                           {0, sin(x), cos(x), 0},
-                           {0, 0, 0, 1}};
-        double my[4][4] = {{cos(y), 0, sin(y), 0},
-                           {0, 1, 0, 0},
-                           {-sin(y), 0, cos(y), 0},
-                           {0, 0, 0, 1}};
-        double mz[4][4] = {{cos(z), -sin(z), 0, 0},
-                           {sin(z), cos(z), 0, 0},
-                           {0, 0, 1, 0},
-                           {0, 0, 0, 1}};
-
-        multiplication_matrice(mat, translation, mx);
-        multiplication_matrice(temp, mat, my);
-        copier_matrice(mat, temp);
-        multiplication_matrice(temp, mat, mz);
-        copier_matrice(mat, temp);
-        multiplication_matrice(temp, mat, translation_inv);
-        copier_matrice(mat, temp);
+        double x1, y1, z1;
+        x1 = degreX * M_PI / 180;
+        y1 = degreY * M_PI / 180;
+        z1 = degreZ * M_PI / 180;
+        double a = cos(x1), b = sin(x1), c = cos(y1), d = sin(y1), e = cos(z1), f = sin(z1),
+        x = centre->xyzt[0], y = centre->xyzt[1], z = centre->xyzt[2];
+        double mat_rot[4][4] = {
+                {e*c,-f*c,d,-x*e*c+(y*f*c+(-z*d+x))},
+                {e*d*b+a*f,(-f*d*b+a*e),-c*b,(-e*d*b-a*f)*x+(y*f*d*b+(-y*a*e+(z*c*b+y)))},
+                {-e*a*d+f*b,(f*a*d+e*b),a*c,(e*a*d-f*b)*x+((-f*a*d-e*b)*y+(-z*a*c+z))},
+                {0,0,0,1}
+        };
+        copier_matrice(mat, mat_rot);
     }
 }
 

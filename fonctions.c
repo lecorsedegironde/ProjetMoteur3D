@@ -75,9 +75,9 @@ t_scene3d *(*ajouter_relation)(t_scene3d *pt_feuille, t_objet3d *pt_objet) = ajo
 void (*translationScene3d)(t_scene3d *pt_scene, t_point3d *vecteur) = translationScene3d_BH;
 
 void (*rotationScene3d)(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY,
-                        float degreZ) = rotationScene3d_PA;
+                        float degreZ) = rotationScene3d_BH;
 
 void (*dessinerScene3d)(t_surface *surface, t_scene3d *pt_scene) = dessinerScene3d_BH;
 
-void (*changerCamera)(t_scene3d *pt_objet) = changerCamera_PA;
+void (*changerCamera)(t_scene3d *pt_objet) = changerCamera_BH;
 /** END SECTION SCENE_3D **/

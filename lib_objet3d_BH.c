@@ -1,5 +1,6 @@
 #include <math.h>
 #include "lib_objet3d.h"
+#include "lib_mat.h"
 
 /**
  * Crée un objet 3d vide
@@ -490,11 +491,6 @@ t_objet3d *copierObjet3d_BH(t_objet3d *o) {
     if (o->est_camera == true) {
         copyObject = camera(o->largeur, o->hauteur, o->proche, o->loin, o->distance_ecran);
     } else {
-        //Trier avant la copie semble être une bonne idée
-        if (!o->est_trie) {
-            mergeSortZ(&o->tete);
-            o->est_trie = true;
-        }
         copyObject = objet_vide();
         copyObject->tete = cloneMaillon(o->tete);
         copyObject->est_trie = true;
@@ -544,49 +540,37 @@ void composerObjet3d_BH(t_objet3d *o, t_objet3d *o2) {
 
 /**
  * Prend 2 objets 3d pour n'en faire qu'un seul et les enlève les faces qui n'apparaissent pas
- * @param o
+ * @param o est retourné
  * @param o2
  * @param camera
  */
 void composerObjet3d_limite_en_z_BH(t_objet3d *o, t_objet3d *o2, t_objet3d *camera) {
     //Composer les objets avec uniquement les faces qui apparaissent dans la camera
-    //On va quand même tester, voir si c'est pas des cameras
-    //Chuis pas censé être con mais on sait jamais
-    if (!o->est_camera && !o2->est_camera) {
-        t_maillon *maillonTMP = o->tete;
-        t_maillon *oldMaillon = o->tete;
-        t_bool o1Over = false;
-        t_bool isHead = true;
-
-        if (maillonTMP == NULL) {
-            maillonTMP = o2->tete;
-            oldMaillon = o2->tete;
-            o->tete = maillonTMP;
-            o1Over = true;
-        }
-        while (maillonTMP->pt_suiv != NULL) {
-            double zMoyen = zmoyen(maillonTMP->face);
-            //Si le zmoyen ne rentre pas on vire la face
-            if (zMoyen < camera->loin || zMoyen > camera->proche) {
-                //On retire le maillon
-                if (!isHead) oldMaillon->pt_suiv = maillonTMP->pt_suiv;
-                else o->tete = maillonTMP->pt_suiv;
-            } else {
-                if (isHead) isHead = false;
-                oldMaillon = maillonTMP;
-            }
-
-            //On passe au maillon suivant
-            maillonTMP = maillonTMP->pt_suiv;
-
-            if (maillonTMP->pt_suiv == NULL && !o1Over && o2->tete != NULL) {
-                maillonTMP->pt_suiv = o2->tete;
-                o1Over = true;
-            }
-        }
-    }
+    //On commence par composer les deux objets grace à la fonction idoine o2 est free dans cette fonction
+    composerObjet3d(o, o2);
+    //o n'est plus trié
     o->est_trie = false;
-    free(o2);
+    //On récoupère la tête
+    t_maillon *maillonTMP = o->tete;
+    t_maillon *oldMaillon = o->tete;
+    //Est-ce que c'est la tête de la liste ?
+    t_bool isHead = true;
+
+    while (maillonTMP->pt_suiv != NULL) {
+        double zMoyen = zmoyen(maillonTMP->face);
+
+        //Si le zmoyen ne rentre pas on retire la face
+        if (zMoyen < camera->loin || zMoyen > camera->proche) {
+            //On retire le maillon
+            if (!isHead) oldMaillon->pt_suiv = maillonTMP->pt_suiv;
+            else o->tete = maillonTMP->pt_suiv;
+        } else {
+            if (isHead) isHead = false;
+            oldMaillon = maillonTMP;
+        }
+        //On passe au maillon suivant
+        maillonTMP = maillonTMP->pt_suiv;
+    }
 }
 
 /**
@@ -643,26 +627,15 @@ t_point3d *centreGraviteObjet3d_BH(t_objet3d *o) {
 void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *camera) {
     t_maillon *maillonTMP = pt_objet->tete;
 
-    //Trier liste
-    if (!pt_objet->est_trie) mergeSortZ(&maillonTMP);
+    if (maillonTMP != NULL) {
+        //Trier liste
+        if (!pt_objet->est_trie) mergeSortZ(&maillonTMP);
 
-    t_maillon *first = NULL;
-
-    //Invert list
-    while (maillonTMP != NULL) {
-        t_maillon *nextMaillon = maillonTMP->pt_suiv;
-        maillonTMP->pt_suiv = first;
-        first = maillonTMP;
-        maillonTMP = nextMaillon;
-    }
-
-    maillonTMP = first;
-
-
-    while (maillonTMP != NULL) {
-        remplirTriangle3d(surface, maillonTMP->face, maillonTMP->couleur, camera->largeur, camera->hauteur,
-                          camera->distance_ecran);
-        maillonTMP = maillonTMP->pt_suiv;
+        while (maillonTMP->pt_suiv != NULL) {
+            remplirTriangle3d(surface, maillonTMP->face, maillonTMP->couleur, camera->largeur, camera->hauteur,
+                              camera->distance_ecran);
+            maillonTMP = maillonTMP->pt_suiv;
+        }
     }
 }
 
@@ -674,14 +647,10 @@ void dessinerObjet3d_BH(t_surface *surface, t_objet3d *pt_objet, t_objet3d *came
  */
 void translationObjet3d_BH(t_objet3d *pt_objet, t_point3d *vecteur) {
     //Création de la matrice
-    double matTranslation[4][4] = {{1, 0, 0, vecteur->xyzt[0]},
-                                   {0, 1, 0, vecteur->xyzt[1]},
-                                   {0, 0, 1, vecteur->xyzt[2]},
-                                   {0, 0, 0, 1}};
+    double matTranslation[4][4];
+    matrice_translation(vecteur, matTranslation);
     transformationObjet3d(pt_objet, matTranslation);
 }
-
-void translationObjet3d_fast_BH(t_objet3d *pt_objet, t_point3d *vecteur) {}
 
 /**
  * Applique une rotation à un objet 3d
@@ -693,19 +662,15 @@ void translationObjet3d_fast_BH(t_objet3d *pt_objet, t_point3d *vecteur) {}
  * @param degreZ
  */
 void rotationObjet3d_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {
-//Création de la matrice de rotation
-    double a = cos(degreX), b = sin(degreX), c = cos(degreY), d = sin(degreY), e = cos(degreZ), f = sin(degreZ);
-    double matRotation[4][4] = {{c * e,                (-c) * f,             d,        0},
-                                {b * d * e + a * f,    -(b * d * f) + a * e, -(b * c), 0},
-                                {-(a * d * e) + b * f, a * d * f + b * e,    a * c,    0},
-                                {0,                    0,                    0,        1}};
-    translationObjet3d(pt_objet, ORIGIN);
+    //Matrice de rotation
+    double matRotation[4][4];
+//    t_point3d * ori = ORIGIN;
+    matrice_rotation(centre, degreX, degreY, degreZ, matRotation);
+//    translationObjet3d(pt_objet, ori);
     transformationObjet3d(pt_objet, matRotation);
-    translationObjet3d(pt_objet, centre);
+//    translationObjet3d(pt_objet, centre);
+//    free(ori);
 }
-
-void rotationObjet3d_fast_BH(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY, float degreZ) {}
-
 
 /**
  * Applique une matrice de transformation à un objet
@@ -720,6 +685,15 @@ void transformationObjet3d_BH(t_objet3d *pt_objet, double mat[4][4]) {
         transformationTriangle3d(maillonTMP->face, mat);
         maillonTMP = maillonTMP->pt_suiv;
     }
+}
+
+/**
+ * Fonction qui permet de trier un objet
+ *
+ * @param objet3d objet à trier
+ */
+void sortObjet3d(t_objet3d * objet3d) {
+    mergeSortZ(&objet3d->tete);
 }
 
 /**
@@ -808,7 +782,7 @@ t_maillon *sortedMergeZ(t_maillon *a, t_maillon *b) {
         result = a;
     } else {
         //Ici on vérifie l'ordre des données
-        if (zmoyen(a->face) >= zmoyen(b->face)) {
+        if (zmoyen(a->face) <= zmoyen(b->face)) {
             result = a;
             //Récursion
             result->pt_suiv = sortedMergeZ(a->pt_suiv, b);

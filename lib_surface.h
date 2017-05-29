@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <SDL/SDL.h>
 
-//#define BIG_SCREEN
-#ifndef BIG_SCREEN
+#define SMALL_SCREEN
+#ifndef SMALL_SCREEN
 #define RX 1024
 #define RY 768
 #else

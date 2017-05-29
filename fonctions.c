@@ -61,28 +61,23 @@ void (*dessinerObjet3d)(t_surface *surface, t_objet3d *pt_objet, t_objet3d *came
 
 void (*translationObjet3d)(t_objet3d *pt_objet, t_point3d *vecteur) = translationObjet3d_BH;
 
-void (*translationObjet3d_fast)(t_objet3d *pt_objet, t_point3d *vecteur) = translationObjet3d_fast_PA;
-
 void (*rotationObjet3d)(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY,
                         float degreZ) = rotationObjet3d_BH;
-
-void (*rotationObjet3d_fast)(t_objet3d *pt_objet, t_point3d *centre, float degreX, float degreY,
-                             float degreZ) = rotationObjet3d_fast_PA;
 
 void (*transformationObjet3d)(t_objet3d *pt_objet, double mat[4][4]) = transformationObjet3d_BH;
 /** END SECTION OBJET_3D **/
 
 /** START SECTION SCENE_3D **/
-t_scene3d *(*definirScene3d)(t_objet3d *pt_objet) = definirScene3d_PA;
+t_scene3d *(*definirScene3d)(t_objet3d *pt_objet) = definirScene3d_BH;
 
-t_scene3d *(*ajouter_relation)(t_scene3d *pt_feuille, t_objet3d *pt_objet) = ajouter_relation_PA;
+t_scene3d *(*ajouter_relation)(t_scene3d *pt_feuille, t_objet3d *pt_objet) = ajouter_relation_BH;
 
-void (*translationScene3d)(t_scene3d *pt_scene, t_point3d *vecteur) = translationScene3d_PA;
+void (*translationScene3d)(t_scene3d *pt_scene, t_point3d *vecteur) = translationScene3d_BH;
 
 void (*rotationScene3d)(t_scene3d *pt_scene, t_point3d *centre, float degreX, float degreY,
-                        float degreZ) = rotationScene3d_PA;
+                        float degreZ) = rotationScene3d_BH;
 
-void (*dessinerScene3d)(t_surface *surface, t_scene3d *pt_scene) = dessinerScene3d_PA;
+void (*dessinerScene3d)(t_surface *surface, t_scene3d *pt_scene) = dessinerScene3d_BH;
 
-void (*changerCamera)(t_scene3d *pt_objet) = changerCamera_PA;
+void (*changerCamera)(t_scene3d *pt_objet) = changerCamera_BH;
 /** END SECTION SCENE_3D **/

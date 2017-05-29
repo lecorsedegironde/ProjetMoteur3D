@@ -198,7 +198,7 @@ void remplirTriangle2d(t_surface *surface, t_triangle2d *triangle, Uint32 c) {
 #if 1
         SDL_Rect ligne;
         ligne.x = xmin[y];
-        ligne.w = xmax[y] - xmin[y];
+        ligne.w = (Uint16) (xmax[y] - xmin[y]);
         ligne.y = y;
         ligne.h = 1;
         SDL_FillRect(surface->ecran, &ligne, c);

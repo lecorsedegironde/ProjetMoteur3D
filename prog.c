@@ -1,85 +1,88 @@
 #include <stdio.h>
-#include <unistd.h>
-#include <math.h>
 #include "lib_surface.h"
-#include "lib_2d.h"
 #include "lib_3d.h"
 #include "lib_objet3d.h"
 #include "lib_scene3d.h"
+#include "event.h"
 
 #define N_CAMERA 1
-#define DUREE 3*60
+//#define DUREE 3*60
 
-SDL_Event event;
-int x = 0, y = 0;
 t_scene3d *scene, *cams[N_CAMERA];
-t_bool is_button_down = false;
 t_bool is_pause = false;
+t_bool is_pause_released = true;
+t_bool quit = false;
 
 t_objet3d *cam;
-int idx_cam = 1;
+//int idx_cam = 1;
+
+int dxTotal = 0, dyTotal = 0, dzTotal = 0;
+float rxTotal = 0, ryTotal = 0;
+
+void handle_events(Input in) {
+    int dx = 0, dy = 0, dz = 0;
+    float rx = 0, ry = 0;
+
+    if (in.mouse_motion && in.mousebuttons[SDL_BUTTON_LEFT]) {
+        //rotation de la camera active
+        // definition : 200px = rotation de 90° sur un axe
+        rx = (float) (90.0 * (in.mousey - in.mouseyp) / 200.0);
+        ry = (float) (90.0 * (in.mousex - in.mousexp) / 200.0);
+    }
+
+    if (in.key[SDLK_w]) {
+        dz--;
+    } else if (in.key[SDLK_s]) {
+        dz++;
+    }
+
+    if (in.key[SDLK_a]) {
+        dx--;
+    } else if (in.key[SDLK_d]) {
+        dx++;
+    }
+
+    if (in.key[SDLK_UP]) {
+        dy++;
+    } else if (in.key[SDLK_DOWN]) {
+        dy--;
+    }
 
 
-void handle_events() {
-    if (event.type == SDL_MOUSEMOTION && is_button_down) {
-        int xd, yd;
-        t_point3d *centre = definirPoint3d(0, 0, 0);
+    if (in.key[SDLK_r]) {
+        dx = -dxTotal;
+        dy = -dyTotal;
+        dz = -dzTotal;
+//        rx = -rxTotal;
+//        ry = -ryTotal;
+    }
 
-        xd = event.motion.x;
-        yd = event.motion.y;
-
-        //rotation de la camra active
-        // definition : 100px = rotation de 90° sur un axe
-        rotationScene3d(scene, centre, 0, 90.0 * (xd - x) / 100.0, 0);
-        rotationScene3d(scene, centre, 90.0 * (yd - y) / 100.0, 0, 0);
-
-
-        x = xd;
-        y = yd;
-
-        free(centre);
-
-    } else if (event.type == SDL_MOUSEBUTTONDOWN) {
-        is_button_down = true;
-        x = event.motion.x;
-        y = event.motion.y;
-    } else if (event.type == SDL_MOUSEBUTTONUP) {
-        is_button_down = false;
-    } else {
-        const Uint8 *currentKeyStates = SDL_GetKeyState(NULL);
-        if (currentKeyStates[SDLK_UP]) {
-            t_point3d *deplacement = definirVecteur3d(0, 0, -10);
-            translationScene3d(scene, deplacement);
-            free(deplacement);
-        } else if (currentKeyStates[SDLK_DOWN]) {
-            t_point3d *deplacement = definirVecteur3d(0, 0, 10);
-            translationScene3d(scene, deplacement);
-            free(deplacement);
-        } else if (currentKeyStates[SDLK_z]) {
-            t_point3d *deplacement = definirVecteur3d(0, 10, 0);
-            translationScene3d(scene, deplacement);
-            free(deplacement);
-        } else if (currentKeyStates[SDLK_s]) {
-            t_point3d *deplacement = definirVecteur3d(0, -10, 0);
-            translationScene3d(scene, deplacement);
-            free(deplacement);
-        } else if (currentKeyStates[SDLK_LEFT]) {
-            t_point3d *deplacement = definirVecteur3d(-10, 0, 0);
-            translationScene3d(scene, deplacement);
-            free(deplacement);
-        } else if (currentKeyStates[SDLK_RIGHT]) {
-            t_point3d *deplacement = definirVecteur3d(10, 0, 0);
-            translationScene3d(scene, deplacement);
-            free(deplacement);
-        } else if (currentKeyStates[SDLK_ESCAPE]) {
-            event.type = SDL_QUIT;
-        } else if (currentKeyStates[SDLK_SPACE]) {
+    if (in.key[SDLK_SPACE]) {
+        if (is_pause_released) {
+            is_pause_released = false;
             is_pause ? (is_pause = false) : (is_pause = true);
         }
-
+    } else {
+        is_pause_released = true;
     }
-}
 
+    if (in.key[SDLK_ESCAPE] || in.quit) {
+        quit = true;
+    }
+    dxTotal += dx;
+    dyTotal += dy;
+    dzTotal += dz;
+    rxTotal += rx;
+    ryTotal += ry;
+
+    t_point3d *centre = definirPoint3d(0, 0, 0);
+    t_point3d *deplacement = definirVecteur3d(dx, dy, dz);
+
+    rotationScene3d(scene, centre, rx, ry, 0);
+    translationScene3d(scene, deplacement);
+    free(deplacement);
+    free(centre);
+}
 
 int main(int argc, char **argv) {
     t_surface *surface = NULL;
@@ -91,6 +94,10 @@ int main(int argc, char **argv) {
     t_point3d *v = definirVecteur3d(2, 0, 0), *vi = definirVecteur3d(-2, 0, 0);
     t_scene3d *scn_sol, *scn_voiture, *scn_arb, *scn_r1, *scn_r2, *scn_r3, *scn_r4;
     int i = 0, sens = 1;
+
+    //Declare and initialise input
+    Input in;
+    memset(&in, 0, sizeof(in));
 
     scn_sol = definirScene3d(damier(1000, 1000, 11, 11));
 
@@ -112,7 +119,7 @@ int main(int argc, char **argv) {
     scn_arb = ajouter_relation(scn_sol, arbre(30, 150, 30)); // l'arbre repose sur le sol
     translationScene3d(scn_arb,
                        definirVecteur3d(500, 75, 0)); //75 car il est centre sur le sol et on le veut pose dessus
-    printf("%d faces\n", nb_faces);
+//    printf("%d faces\n", nb_faces);
 
     //rotationScene3d(scn_cam2, origine, 0, 30, 0);
     //translationScene3d(scn_cam2, definirVecteur3d(0,200,0));
@@ -123,17 +130,22 @@ int main(int argc, char **argv) {
 
     surface = creerFenetre(RX, RY);
     timestart = SDL_GetTicks();
-    oldtime = timestart;
+//    oldtime = timestart;
 
-    while (/*++i < DUREE * 60 && */event.type != SDL_QUIT) // DUREE " * 60FPS
+    while (/*++i < DUREE * 60 && */!quit) // DUREE " * 60FPS
     {
-        ++i;
-        effacerFenetre(surface, 0);
 
-        if (SDL_PollEvent(&event)) {
-            handle_events();
-        }
+//        Uint32 couleur = (Uint32) (rand() % 100000000);
+        Uint32  couleur = 0;
+        effacerFenetre(surface, couleur);
+
+        //Update events state
+        UpdateEvents(&in);
+        //handle events change
+        handle_events(in);
+
         if (!is_pause) {
+            ++i;
             rotationScene3d(scn_r1, origine, 0, 0, sens * 5);
             rotationScene3d(scn_r2, origine, 0, 0, sens * 5);
             rotationScene3d(scn_r3, origine, 0, 0, sens * 5);

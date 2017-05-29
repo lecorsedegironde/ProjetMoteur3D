@@ -190,10 +190,8 @@ void remplirTriangle3d_BH(t_surface *surface, t_triangle3d *triangle, Uint32 c, 
  */
 void translationTriangle3d_BH(t_triangle3d *t, t_point3d *vecteur) {
     //Création de la matrice
-    double matTranslation[4][4] = {{1, 0, 0, vecteur->xyzt[0]},
-                                   {0, 1, 0, vecteur->xyzt[1]},
-                                   {0, 0, 1, vecteur->xyzt[2]},
-                                   {0, 0, 0, 1}};
+    double matTranslation[4][4];
+    matrice_translation(vecteur, matTranslation);
     //Pour chaque point, on le multiplie avec la matrice
     transformationTriangle3d(t, matTranslation);
 }
@@ -211,15 +209,14 @@ void translationTriangle3d_BH(t_triangle3d *t, t_point3d *vecteur) {
  */
 void rotationTriangle3d_BH(t_triangle3d *t, t_point3d *centre, float degreX, float degreY, float degreZ) {
     //Transformation des angles d'euler en matrice de rotation
-    double a = cos(degreX), b = sin(degreX), c = cos(degreY), d = sin(degreY), e = cos(degreZ), f = sin(degreZ);
-    double matRotation[4][4] = {{c * e,                (-c) * f,             d,        0},
-                                {b * d * e + a * f,    -(b * d * f) + a * e, -(b * c), 0},
-                                {-(a * d * e) + b * f, a * d * f + b * e,    a * c,    0},
-                                {0,                    0,                    0,        1}};
+    double matRotation[4][4];
+//    t_point3d * ori = ORIGIN;
+    matrice_rotation(centre, degreX, degreY, degreZ, matRotation);
     //Translation des points vers l'origine, application de la matrice et tranlation inverse
-    translationTriangle3d(t, ORIGIN);
+//    translationTriangle3d(t, ori);
     transformationTriangle3d(t, matRotation);
-    translationTriangle3d(t, centre);
+//    translationTriangle3d(t, centre);
+//    free(ori);
 }
 
 /**
